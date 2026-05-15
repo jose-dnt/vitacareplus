@@ -4,7 +4,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
-const db = require('./db'); // seu db.js
+const db = require('./db');
 
 require("dotenv-safe").config();
 
@@ -57,9 +57,9 @@ app.get('/register', (req,res)=>{
 // ======================
 app.post('/register', async (req,res)=>{
 
-    const { username, email, password } = req.body;
+    const { nome, email, senha } = req.body;
 
-    if(!username || !email || !password){
+    if(!nome || !email || !senha){
         return res.redirect('/register?erro=true');
     }
 
@@ -67,21 +67,24 @@ app.post('/register', async (req,res)=>{
 
         if(err){
             console.log(err);
+            console.log(3)
             return res.redirect('/register?erro=true');
         }
 
         if(results.length > 0){
+            console.log(2)
             return res.redirect('/register?erro=true');
         }
 
-        const hash = await bcrypt.hash(password, 10);
+        const hash = await bcrypt.hash(senha, 10);
 
         db.query(
-            "INSERT INTO usuarios (username, email, password) VALUES (?, ?, ?)",
-            [username, email, hash],
+            "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)",
+            [nome, email, hash],
             (err)=>{
                 if(err){
                     console.log(err);
+                    console.log(1)
                     return res.redirect('/register?erro=true');
                 }
 
@@ -96,7 +99,7 @@ app.post('/register', async (req,res)=>{
 // ======================
 app.post('/login', (req,res)=>{
 
-    const { email, password } = req.body;
+    const { email, senha } = req.body;
 
     db.query("SELECT * FROM usuarios WHERE email = ?", [email], async (err, results)=>{
 
@@ -111,7 +114,7 @@ app.post('/login', (req,res)=>{
 
         const usuario = results[0];
 
-        const senhaValida = await bcrypt.compare(password, usuario.password);
+        const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
         if(!senhaValida){
             return res.redirect('/login?erro=true');
@@ -147,7 +150,7 @@ app.get('/pacientes', verifyJWT, (req,res)=>{
 
 app.get('/me', verifyJWT, (req, res) => {
 
-    db.query("SELECT username, email FROM usuarios WHERE id = ?", [req.userId], (err, results) => {
+    db.query("SELECT nome, email FROM usuarios WHERE id = ?", [req.userId], (err, results) => {
 
         if(err || results.length === 0){
 
