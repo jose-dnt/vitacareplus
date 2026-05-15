@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare+</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+    <div class="flex">
+
+        <!-- MENU -->
+        <aside class="w-56 bg-black text-white min-h-screen p-4">
+            <h1 class="text-lg font-bold mb-4">
+                Vita<strong class="text-yellow-500">Care</strong>+
+            </h1>
+
+            <nav>
+                <ul>
+                    <li class="py-2"><a href="/principal" class="hover:text-yellow-500">Dashboard</a></li>
+                    <li class="py-2"><a href="/pacientes" class="hover:text-yellow-500">Pacientes</a></li>
+                    <li class="py-2"><a href="/profissionais" class="hover:text-yellow-500">Profissionais</a></li>
+                    <li class="py-2"><a href="/consultas" class="hover:text-yellow-500">Consultas</a></li>
+                    <li class="py-2"><a href="/usuario" class="hover:text-yellow-500">Usuários</a></li>
+                    <li class="py-2"><a href="/logout" class="hover:text-red-400">Sair</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- CONTEÚDO -->
+        <main class="flex-1 p-6">
+
+            <h2 class="text-2xl font-bold mb-6">
+                Bem-vindo, <span id="userNameMain">...</span>
+            </h2>
+
+            <!-- CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                <div class="bg-blue-600 text-white p-4 rounded-lg text-center shadow">
+                    <p class="text-2xl font-bold" id="totalPacientes">0</p>
+                    <p>Pacientes cadastrados</p>
+                </div>
+
+                <div class="bg-green-600 text-white p-4 rounded-lg text-center shadow">
+                    <p class="text-2xl font-bold" id="totalConsultas">0</p>
+                    <p>Consultas hoje</p>
+                </div>
+
+                <div class="bg-yellow-500 text-white p-4 rounded-lg text-center shadow">
+                    <p class="text-2xl font-bold" id="totalProfissionais">0</p>
+                    <p>Profissionais</p>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        /* =========================
+           DADOS DO USUÁRIO
+        ========================= */
+        fetch('/me')
+            .then(res => res.json())
+            .then(data => {
+                const nome = data.username || "Usuário";
+
+                document.getElementById('userNameMain').innerText = nome;
+            })
+
+        /* =========================
+           DADOS DO DASHBOARD (FAKE POR ENQUANTO)
+        ========================= */
+
+        // depois você pode puxar isso do banco
+        document.getElementById('totalPacientes').innerText = 12;
+        document.getElementById('totalConsultas').innerText = 5;
+        document.getElementById('totalProfissionais').innerText = 3;
+
+    </script>
+
+</body>
+
+</html>

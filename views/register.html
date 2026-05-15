@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare+</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f0f0f0;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background: black;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #333;
+        }
+
+        .link-btn {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            text-decoration: none;
+            background: black;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .link-btn:hover {
+            background: #333;
+        }
+
+        #error {
+            color: #d9534f;
+            background: #f2dede;
+            border: 1px solid #ebccd1;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Cadastro</h2>
+
+        <div id="error">Erro ao cadastrar usuário.</div>
+
+        <form action="/register" method="POST">
+
+            <label for="username">Nome de Usuário</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" minlength="6" required>
+
+            <button type="submit">Cadastrar</button>
+
+        </form>
+
+        <a href="/login" class="link-btn">Voltar</a>
+
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('erro') === 'true') {
+            document.getElementById('error').style.display = 'block';
+        }
+    </script>
+
+</body>
+
+</html>
