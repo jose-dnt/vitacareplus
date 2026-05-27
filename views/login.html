@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare</title>
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="icon" type="image/png" href="/images/logoFavicon.png">
+
+</head>
+
+<body>
+    <div class="page">
+    <img src="../images/logoVITA.png" alt="Logo da clinica VITA" class="logo">
+
+    <div class="login-container">
+        <h2>Login</h2>
+
+        <div id="error-message">Email ou senha incorretos.</div>
+
+        <form action="/login" method="POST">
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <label>Senha</label>
+            <input type="password" name="senha" required>
+
+            <div class="button-container">
+                <button type="submit">Entrar</button>
+                <button type="reset">Limpar</button>
+            </div>
+        </form>
+
+        <a href="/register" class="register-link">Cadastrar</a>
+
+    </div>
+</div>
+
+<script src="../js/login.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaCare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/principal.css">
+    <link rel="icon" type="image/png" href="../images/logoFavicon.png">
+
+</head>
+
+<body class="bg-gray-100">
+
+    <div class="flex">
+
+        <!-- MENU -->
+        <aside class="menu">
+            <h1 class="logo">
+                Vita<span>Care</span><small>+</small>
+            </h1>
+
+            <nav>
+                <ul>
+                    <li class="py-2"><a href="/principal" class="hover:text-yellow-500">Dashboard</a></li>
+                    <li class="py-2"><a href="/pacientes" class="hover:text-yellow-500">Pacientes</a></li>
+                    <li class="py-2"><a href="/profissionais" class="hover:text-yellow-500">Profissionais</a></li>
+                    <li class="py-2"><a href="/consultas" class="hover:text-yellow-500">Consultas</a></li>
+                    <li class="py-2"><a href="/logout" class="hover:text-red-400">Sair</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- CONTEÚDO -->
+        <main class="conteudo">
+
+            <h2 class="titulo-dashboard">
+                Bem-vindo, <span id="userNameMain">...</span>!
+            </h2>
+
+            <!-- CARDS -->
+            <div class="cards-grid">
+
+                <div class="card-dashboard">
+                    <p class="numero-card" id="totalPacientes">0</p>
+                    <p>Pacientes cadastrados</p>
+                </div>
+
+                <div class="card-dashboard">
+                    <p class="numero-card" id="totalConsultas">0</p>
+                    <p>Consultas hoje</p>
+                </div>
+
+                <div class="card-dashboard">
+                    <p class="numero-card" id="totalProfissionais">0</p>
+                    <p>Profissionais</p>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../js/principal.js"></script>
+
+</body>
+
+</html>

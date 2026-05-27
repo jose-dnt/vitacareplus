@@ -1,0 +1,102 @@
+/* ===== MENU ===== */
+
+.menu {
+    width: 200px;
+    min-height: 100vh;
+    background: #000000e6;
+    padding: 25px;
+    color: white;
+}
+
+.menu nav ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 40px;
+}
+
+.menu nav ul li {
+    margin-bottom: 8px;
+}
+
+.menu nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+/* ===== LOGO ===== */
+
+.logo {
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.logo span {
+    color: #ff0000;
+}
+
+/* ===== CONTEÚDO PRINCIPAL ===== */
+
+.conteudo {
+    flex: 1;
+    min-height: 100vh;
+    padding: 40px;
+
+    background: linear-gradient(
+        to bottom,
+        #ffffff 0%,
+        #ff0000 100%
+    );
+}
+
+/* ===== TÍTULO ===== */
+
+.titulo-dashboard {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 50px;
+    color: #000000e6;
+}
+
+/* ===== CARDS ===== */
+
+.cards-grid {
+    display: flex;
+    gap: 25px;
+}
+
+.card-dashboard {
+    width: 100%;
+
+    background-color: rgba(255, 255, 255, 0.712);
+    padding: 25px;
+    border-radius: 16px;
+    
+    text-align: center;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+    transition: 0.3s;
+}
+
+.numero-card {
+    font-size: 25px;
+    font-weight: 700;
+    color: #991B1B;
+
+    margin-bottom: 10px;
+}
+
+.card-dashboard p:last-child {
+    color: #4B5563;
+    font-size: 13px;
+}
