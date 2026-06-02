@@ -1,38 +1,41 @@
-const express = require('express');
+import express from 'express';
+import path, { dirname } from 'path';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
+import { conectarBanco } from './db.js';
 const app = express();
-const path = require('path');
-const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
-const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
-const db = require('./db');
 
-const pacienteRouter = require('./routes/pacienteRoutes');
-const profissionalRouter = require('./routes/profissionalRoutes');
+const db = await conectarBanco();
 
-require("dotenv-safe").config();
+import { router as pacienteRouter } from './routes/pacienteRoutes.js';
+import { router as profissionalRouter } from './routes/profissionalRoutes.js';
+
+import dotenv from 'dotenv-safe';
+dotenv.config()
 
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(import.meta.dirname, "public")));
 
 const PORT = 3000;
 
 // ======================
 // Middleware JWT
 // ======================
-function verifyJWT(req, res, next){
+function verifyJWT(req, res, next) {
 
     const token = req.cookies.token;
 
-    if (!token){
+    if (!token) {
         return res.redirect('/login');
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded)=>{
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
 
-        if(err){
+        if (err) {
             return res.redirect('/login');
         }
 
@@ -44,83 +47,70 @@ function verifyJWT(req, res, next){
 // ======================
 // Rotas públicas
 // ======================
-app.get('/', (req,res)=>{
+app.get('/', (req, res) => {
     res.redirect('/login');
 });
 
-app.get('/login', (req,res)=>{
-    res.sendFile(path.join(__dirname,'views','login.html'));
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(import.meta.dirname, 'views', 'login.html'));
 });
 
-app.get('/register', (req,res)=>{
-    res.sendFile(path.join(__dirname,'views','register.html'));
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(import.meta.dirname, 'views', 'register.html'));
 });
 
 // ======================
 // REGISTER
 // ======================
-app.post('/register', async (req,res)=>{
+app.post('/register', async (req, res) => {
 
     const { nome, email, senha } = req.body;
 
-    if(!nome || !email || !senha){
+    if (!nome || !email || !senha) {
         return res.redirect('/register?erro=true');
     }
 
-    db.query("SELECT * FROM usuarios WHERE email = ?", [email], async (err, results)=>{
+    try {
+        const [rows] = await db.query("SELECT * FROM usuarios WHERE email = ?", [email]);
 
-        if(err){
-            console.log(err);
-            console.log(3)
-            return res.redirect('/register?erro=true');
-        }
-
-        if(results.length > 0){
-            console.log(2)
-            return res.redirect('/register?erro=true');
+        if (rows.length > 0) {
+            throw new Error("Usuário já existe")
         }
 
         const hash = await bcrypt.hash(senha, 10);
 
-        db.query(
+        await db.query(
             "INSERT INTO usuarios (id, nome, email, senha) VALUES (?, ?, ?, ?)",
             [crypto.randomUUID(), nome, email, hash],
-            (err)=>{
-                if(err){
-                    console.log(err);
-                    return res.redirect('/register?erro=true');
-                }
-
-                res.redirect('/login');
-            }
         );
-    });
-});
 
+        res.redirect('/login');
+
+    } catch (err) {
+        console.log(err);
+        return res.redirect('/register?erro=true');
+    }
+})
 // ======================
 // LOGIN
 // ======================
-app.post('/login', (req,res)=>{
+app.post('/login', async (req, res) => {
 
-    const { email, senha } = req.body;
+    try {
+        const { email, senha } = req.body;
 
-    db.query("SELECT * FROM usuarios WHERE email = ?", [email], async (err, results)=>{
+        const [rows] = await db.query("SELECT * FROM usuarios WHERE email = ?", [email])
 
-        if(err){
-            console.log(err);
-            return res.redirect('/login?erro=true');
+        if (rows.length === 0) {
+            throw new Error("Usuário não existe")
         }
 
-        if(results.length === 0){
-            return res.redirect('/login?erro=true');
-        }
-
-        const usuario = results[0];
+        const usuario = rows[0];
 
         const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
-        if(!senhaValida){
-            return res.redirect('/login?erro=true');
+        if (!senhaValida) {
+            throw new Error("Senha inválida")
         }
 
         const token = jwt.sign(
@@ -137,37 +127,40 @@ app.post('/login', (req,res)=>{
         });
 
         res.redirect('/principal');
-    });
+
+    } catch (err) {
+        console.log(err);
+        return res.redirect('/login?erro=true');
+    }
 });
+
 
 // ======================
 // Página protegida
 // ======================
-app.get('/principal', verifyJWT, (req,res)=>{
-    res.sendFile(path.join(__dirname,'views','principal.html'));
+app.get('/principal', verifyJWT, (req, res) => {
+    res.sendFile(path.join(import.meta.dirname, 'views', 'principal.html'));
 });
 
 app.use("/pacientes", pacienteRouter);
-
 app.use("/profissionais", profissionalRouter);
 
-app.get('/me', verifyJWT, (req, res) => {
+app.get('/me', verifyJWT, async (req, res) => {
 
-    db.query("SELECT nome, email FROM usuarios WHERE id = ?", [req.userId], (err, results) => {
+    const [rows] = await db.query("SELECT nome, email FROM usuarios WHERE id = ?", [req.userId]);
 
-        if(err || results.length === 0){
+    if (rows.length === 0) {
 
-            return res.status(400).json({ erro: "Usuário não encontrado" });
-        }
+        return res.status(400).json({ erro: "Usuário não encontrado" });
+    }
 
-        res.json(results[0]);
-    });
+    res.json(rows[0]);
 });
 
 // ======================
 // Logout
 // ======================
-app.get('/logout', (req,res)=>{
+app.get('/logout', (req, res) => {
     res.clearCookie('token');
     res.redirect('/login');
 });
@@ -175,6 +168,6 @@ app.get('/logout', (req,res)=>{
 // ======================
 // Servidor
 // ======================
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
 });

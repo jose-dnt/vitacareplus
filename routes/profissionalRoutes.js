@@ -1,6 +1,6 @@
-const express = require('express');
-const router = express.Router();
-const ProfissionalController = require('../controllers/profissionalController');
+import express from 'express';
+import ProfissionalController from '../controllers/profissionalController.js';
+export const router = express.Router();
 
 // Rota principal que serve o HTML
 router.get('/', ProfissionalController.index);
@@ -9,5 +9,3 @@ router.get('/', ProfissionalController.index);
 router.get('/fetchData', ProfissionalController.fetchData);
 router.post('/submitData', ProfissionalController.submitData);
 router.get('/fetchData/:id', ProfissionalController.fetchSingle);
-
-module.exports = router;

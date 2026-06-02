@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VitaCare</title>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/css/principal.css">
+    <link rel="stylesheet" href="/css/pacientes.css">
+    <link rel="icon" type="image/png" href="/images/logoFavicon.png">
+</head>
+
+<body>
+   <body class="bg-gray-100">
+
+    <div class="layout">
+
+        <!-- MENU LATERAL -->
+        <aside class="menu">
+            <h1 class="logo">
+                Vita<span>Care</span><small>+</small>
+            </h1>
+
+            <nav>
+                <ul>
+                    <li class="py-2">
+                        <a href="/principal" class="hover:text-yellow-500">
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="py-2">
+                        <a href="/pacientes" class="hover:text-yellow-500">
+                            Pacientes
+                        </a>
+                    </li>
+
+                    <li class="py-2">
+                        <a href="/profissionais" class="hover:text-yellow-500">
+                            Profissionais
+                        </a>
+                    </li>
+
+                    <li class="py-2">
+                        <a href="/consultas" class="hover:text-yellow-500">
+                            Consultas
+                        </a>
+                    </li>
+
+                    <li class="py-2">
+                        <a href="/logout" class="hover:text-red-400">
+                            Sair
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="conteudo">
+
+            <h2 class="titulo-pagina">
+                Consultas Agendadas
+            </h2>
+
+            <!-- CARDS -->
+            <div class="cards-grid">
+
+                <div class="card-dashboard">
+                    <p class="numero-card">48</p>
+                    <p>Total de consultas</p>
+                </div>
+
+                <div class="card-dashboard">
+                    <p class="numero-card">12</p>
+                    <p>Consultas do dia</p>
+                </div>
+
+                <div class="card-dashboard">
+                    <p class="numero-card">30</p>
+                    <p>Concluídas</p>
+                </div>
+
+                <div class="card-dashboard">
+                    <p class="numero-card">18</p>
+                    <p>Pendentes</p>
+                </div>
+
+            </div>
+
+            <!-- TABELA -->
+            <div class="tabela-consultas">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Médico</th>
+                            <th>Especialidade</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>João Silva</td>
+                            <td>Dra. Maria Costa</td>
+                            <td>Cardiologia</td>
+                            <td>01/06/2026</td>
+                            <td>14:00</td>
+                            <td>
+                                <span class="status concluida">
+                                    Concluída
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Ana Souza</td>
+                            <td>Dr. Carlos Lima</td>
+                            <td>Dermatologia</td>
+                            <td>02/06/2026</td>
+                            <td>09:30</td>
+                            <td>
+                                <span class="status pendente">
+                                    Pendente
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Pedro Santos</td>
+                            <td>Dra. Fernanda Alves</td>
+                            <td>Pediatria</td>
+                            <td>03/06/2026</td>
+                            <td>11:00</td>
+                            <td>
+                                <span class="status cancelada">
+                                    Cancelada
+                                </span>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script src="/js/pacientes.js"></script>
+
+</body>
+
+</html> 

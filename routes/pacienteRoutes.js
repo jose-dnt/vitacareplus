@@ -1,6 +1,6 @@
-const express = require('express');
-const router = express.Router();
-const PacienteController = require('../controllers/pacienteController');
+import express from 'express';
+import PacienteController from '../controllers/pacienteController.js';
+export const router = express.Router();
 
 // Rota principal que serve o HTML
 router.get('/', PacienteController.index);
@@ -9,5 +9,3 @@ router.get('/', PacienteController.index);
 router.get('/fetchData', PacienteController.fetchData);
 router.post('/submitData', PacienteController.submitData);
 router.get('/fetchData/:id', PacienteController.fetchSingle);
-
-module.exports = router;

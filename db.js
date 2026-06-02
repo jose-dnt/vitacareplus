@@ -1,38 +1,35 @@
-const mysql = require('mysql2');
+import mysql from 'mysql2/promise';
 
-const connection = mysql.createConnection({
-	host: 'localhost',
-	user: 'root',
-	password: 'root'
-});
+let connection = null;
 
-connection.query(`
-    CREATE DATABASE IF NOT EXISTS projeto
-`, (err) => {
+export async function conectarBanco() {
+    if (connection) return connection;
 
-	if (err) {
-		console.error('Erro criando database:', err);
-		return;
-	}
+    try {
+        connection = await mysql.createConnection({
+            host: 'localhost',
+            user: 'root',
+            password: 'root'
+        });
 
-	console.log('Database OK');
+        await connection.query('CREATE DATABASE IF NOT EXISTS projeto');
+        console.log('Database OK');
 
-	connection.changeUser({ database: 'projeto' }, (err) => {
+        await connection.query('USE projeto');
+        console.log('Usando database projeto');
 
-		if (err) {
-			console.error('Erro selecionando database:', err);
-			return;
-		}
+        await criarTabelas();
+        await inserirDados();
 
-		console.log('Usando database projeto');
+        return connection;
+    } catch (error) {
+        console.error('Erro crítico na inicialização do banco:', error);
+        throw error;
+    }
+}
 
-		criarTabelas();
-	});
-});
-
-function criarTabelas() {
-
-	connection.query(`
+async function criarTabelas() {
+	await connection.query(`
         CREATE TABLE IF NOT EXISTS pacientes (
             id VARCHAR(36) PRIMARY KEY,
             nome VARCHAR(100) NOT NULL,
@@ -44,7 +41,7 @@ function criarTabelas() {
         )
     `);
 
-	connection.query(`
+	await connection.query(`
         CREATE TABLE IF NOT EXISTS profissionais (
             id VARCHAR(36) PRIMARY KEY,
             nome VARCHAR(100) NOT NULL,
@@ -55,7 +52,7 @@ function criarTabelas() {
         )
     `);
 
-	connection.query(`
+	await connection.query(`
         CREATE TABLE IF NOT EXISTS consultas (
             id VARCHAR(36) PRIMARY KEY,
             paciente_id VARCHAR(36) NOT NULL,
@@ -64,47 +61,34 @@ function criarTabelas() {
             horario TIME NOT NULL,
             status ENUM('agendada', 'realizada', 'cancelada') DEFAULT 'agendada',
             observacoes TEXT,
-
             FOREIGN KEY (paciente_id) REFERENCES pacientes(id),
             FOREIGN KEY (profissional_id) REFERENCES profissionais(id)
         )
     `);
 
-	connection.query(`
+	await connection.query(`
         CREATE TABLE IF NOT EXISTS historico_medico (
             id VARCHAR(36) PRIMARY KEY,
             consulta_id VARCHAR(36) NOT NULL,
             diagnostico TEXT,
             prescricao TEXT,
             observacoes TEXT,
-
             FOREIGN KEY (consulta_id) REFERENCES consultas(id)
         )
     `);
 
-	connection.query(`
+	await connection.query(`
         CREATE TABLE IF NOT EXISTS disponibilidade (
             id VARCHAR(36) PRIMARY KEY,
             profissional_id VARCHAR(36) NOT NULL,
-
-            dia_semana ENUM(
-                'domingo',
-                'segunda',
-                'terca',
-                'quarta',
-                'quinta',
-                'sexta',
-                'sabado'
-            ),
-
+            dia_semana ENUM('domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'),
             hora_inicio TIME NOT NULL,
             hora_fim TIME NOT NULL,
-
             FOREIGN KEY (profissional_id) REFERENCES profissionais(id)
         )
     `);
 
-	connection.query(`
+	await connection.query(`
         CREATE TABLE IF NOT EXISTS usuarios (
             id VARCHAR(36) PRIMARY KEY,
             nome VARCHAR(100) NOT NULL,
@@ -114,13 +98,10 @@ function criarTabelas() {
     `);
 
 	console.log('Tabelas criadas');
-
-	inserirDados();
 }
 
-function inserirDados() {
-
-	connection.query(`
+async function inserirDados() {
+	await connection.query(`
         INSERT IGNORE INTO pacientes
         (id, nome, cpf, data_nascimento, telefone, email, endereco)
         VALUES
@@ -128,7 +109,7 @@ function inserirDados() {
         (UUID(), 'Maria Souza', '98765432100', '1985-08-22', '82988888888', 'maria@gmail.com', 'Rua B')
     `);
 
-	connection.query(`
+	await connection.query(`
         INSERT IGNORE INTO profissionais
         (id, nome, crm, especialidade, telefone, email)
         VALUES
@@ -137,6 +118,4 @@ function inserirDados() {
     `);
 
 	console.log('Dados inseridos');
-};
-
-module.exports = connection;
+}

@@ -1,39 +1,41 @@
-const PacienteModel = require('../models/pacienteModel');
-const path = require('path');
+import PacienteDAO from '../dao/pacienteDAO.js';
+import path from 'path';
+import { conectarBanco } from '../db.js';
 
-class PacienteController {
+const db = await conectarBanco()
+const DAO = new PacienteDAO(db);
+
+export default class PacienteController {
     static index(req, res) {
-        res.sendFile(path.join(__dirname, '..', 'views', 'pacientes.html'));
+        res.sendFile(path.join(import.meta.dirname, '..', 'views', 'pacientes.html'));
     }
-    static fetchData(req, res) {
-        PacienteModel.fetchAll(req.query, (err, data) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ error: 'Falha acessando os dados!' });
-            }
-            res.json(data);
-        });
-    }
-
-    static submitData(req, res) {
-        PacienteModel.submitData(req.body, (err, result) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ error: 'Falha enviando os dados!' });
-            }
-            res.json(result);
-        });
+    static async fetchData(req, res) {
+        try {
+            const data = await DAO.fetchAll(req.query);
+            res.json(data)
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Falha acessando os dados!' });
+        };
     }
 
-    static fetchSingle(req, res) {
-        PacienteModel.fetchSingle(req.params.id, (err, data) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ error: 'Falha acessando os dados!' });
-            }
-            res.json(data);
-        });
+    static async submitData(req, res) {
+        try {
+            const result = await DAO.submitData(req.body);
+            res.json(result)
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Falha enviando os dados!' });
+        }
+    }
+
+    static async fetchSingle(req, res) {
+        try {
+            const data = await DAO.fetchSingle(req.params.id)
+            res.json(data)
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Falha acessando os dados!' });
+        }
     }
 }
-
-module.exports = PacienteController;

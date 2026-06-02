@@ -1,77 +1,23 @@
-const connection = require('../db');
+export default class Profissional {
 
-class PacienteModel {
-    static fetchAll(queryData, callback) {
-        const { draw, start, length, order, columns, search } = queryData;
-
-        const column_index = order && order[0] && order[0].column;
-        const column_sort_order = order === undefined ? 'desc' : order[0]['dir'];
-        const column_name = column_index ? columns[column_index] : 'id';
-        const search_value = search.value;
-
-        const search_query = search_value ? ` WHERE nome LIKE '%${search_value}%' OR crm LIKE '%${search_value}%' OR especialidade LIKE '%${search_value}%' OR telefone LIKE '%${search_value}%' OR email LIKE '%${search_value}%'` : '';
-
-        const query1 = `SELECT id, nome, crm, especialidade, telefone, email FROM profissionais ${search_query} ORDER BY ${column_name} ${column_sort_order} LIMIT ${start}, ${length}`;
-        const query2 = `SELECT COUNT(*) AS Total FROM profissionais`;
-        const query3 = `SELECT COUNT(*) AS Total FROM profissionais ${search_query}`;
-
-        connection.query(query1, (dataError, dataResult) => {
-            if (dataError) return callback(dataError);
-
-            connection.query(query2, (totalDataError, totalDataResult) => {
-                if (totalDataError) return callback(totalDataError);
-
-                connection.query(query3, (totalFilterDataError, totalFilterDataResult) => {
-                    if (totalFilterDataError) return callback(totalFilterDataError);
-
-                    const response = {
-                        draw: draw,
-                        recordsTotal: totalDataResult[0]['Total'],
-                        recordsFiltered: totalFilterDataResult[0]['Total'],
-                        data: dataResult
-                    };
-                    callback(null, response);
-                });
-            });
-        });
+    constructor(id, nome, crm, especialidade, telefone, email) {
+        this.id = id
+        this.nome = nome
+        this.crm = crm
+        this.especialidade = especialidade
+        this.telefone = telefone
+        this.email = email
     }
 
-    static submitData(data, callback) {
-        const { id, nome, crm, especialidade, telefone, email, action } = data;
-        let query;
-        let queryData;
-        let message;
-
-        if (action === 'Insert') {
-            query = `INSERT INTO profissionais (id, nome, crm, especialidade, telefone, email) VALUES (?, ?, ?, ?, ?, ?)`;
-            queryData = [id, nome, crm, especialidade, telefone, email];
-            message = 'Dados foi inserido!';
-        } else if (action === 'Edit') {
-            query = `UPDATE profissionais SET nome = ?, crm = ?, especialidade = ?, telefone = ?, email = ? = ? WHERE id = ?`;
-            queryData = [nome, crm, especialidade, telefone, email, id];
-            message = 'Dados atualizados!';
-        } else if (action === 'Delete') {
-            query = `DELETE FROM profissionais WHERE id = ?`;
-            queryData = [id];
-            message = 'Deletado!';
-        } else {
-            return callback(new Error('Ação inválida!'));
-        }
-
-        connection.query(query, queryData, (error, result) => {
-            if (error) return callback(error);
-            callback(null, { message: message });
-        });
-    }
-
-    static fetchSingle(id, callback) {
-        const query = `SELECT * FROM profissionais WHERE id = ?`;
-
-        connection.query(query, [id], (error, result) => {
-            if (error) return callback(error);
-            callback(null, result[0]);
-        });
+    static constructFromObject(object) {
+        return new Profissional(
+            object.id,
+            object.nome,
+            object.crm,
+            object.especialidade,
+            object.telefone,
+            object.email,
+        )
     }
 }
 
-module.exports = PacienteModel;

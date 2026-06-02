@@ -1,39 +1,41 @@
-const ProfissionalModel = require('../models/profissionalModel');
-const path = require('path');
+import ProfissionalDAO from '../dao/profissionalDAO.js';
+import path from 'path';
+import { conectarBanco } from '../db.js';
 
-class PacienteController {
+const db = await conectarBanco()
+const DAO = new ProfissionalDAO(db);
+
+export default class ProfissionalController {
     static index(req, res) {
-        res.sendFile(path.join(__dirname, '..', 'views', 'profissional.html'));
+        res.sendFile(path.join(import.meta.dirname, '..', 'views', 'profissionais.html'));
     }
-    static fetchData(req, res) {
-        ProfissionalModel.fetchAll(req.query, (err, data) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ error: 'Falha acessando os dados!' });
-            }
-            res.json(data);
-        });
-    }
-
-    static submitData(req, res) {
-        ProfissionalModel.submitData(req.body, (err, result) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ error: 'Falha enviando os dados!' });
-            }
-            res.json(result);
-        });
+    static async fetchData(req, res) {
+        try {
+            const data = await DAO.fetchAll(req.query);
+            res.json(data)
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Falha acessando os dados!' });
+        };
     }
 
-    static fetchSingle(req, res) {
-        ProfissionalModel.fetchSingle(req.params.id, (err, data) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ error: 'Falha acessando os dados!' });
-            }
-            res.json(data);
-        });
+    static async submitData(req, res) {
+        try {
+            const result = await DAO.submitData(req.body);
+            res.json(result)
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Falha enviando os dados!' });
+        }
+    }
+
+    static async fetchSingle(req, res) {
+        try {
+            const data = await DAO.fetchSingle(req.params.id)
+            res.json(data)
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Falha acessando os dados!' });
+        }
     }
 }
-
-module.exports = PacienteController;
