@@ -1,34 +1,24 @@
 $(document).ready(function () {
 
-    const modal = $('#modalPaciente');
+    const modal = $('#modalProfissional');
 
-    const tabela = $('#tabelaPacientes').DataTable({
+    const tabela = $('#tabelaProfissionais').DataTable({
 
         processing: true,
         serverSide: true,
         ordering: false,
 
         ajax: {
-            url: '/pacientes/fetchData',
+            url: '/profissionais/fetchData',
             type: 'GET'
         },
 
         columns: [
             { data: 'nome' },
-            { data: 'cpf' },
-            {
-                data: 'data_nascimento',
-                render: function (data) {
-
-                    if (!data) return '';
-
-                    return new Date(data)
-                        .toLocaleDateString('pt-BR');
-                }
-            },
+            { data: 'crm' },
+            { data: 'especialidade' },
             { data: 'telefone' },
             { data: 'email' },
-            { data: 'endereco' },
             {
                 data: 'id',
                 render: function (id) {
@@ -54,15 +44,15 @@ $(document).ready(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | NOVO PACIENTE
+    | NOVO PROFISSIONAL
     |--------------------------------------------------------------------------
     */
 
-    $('#btnNovoPaciente').on('click', function () {
+    $('#btnNovoProfissional').on('click', function () {
 
-        $('#modalTitulo').text('Novo Paciente');
+        $('#modalTitulo').text('Novo Profissional');
 
-        $('#formPaciente')[0].reset();
+        $('#formProfissional')[0].reset();
 
         $('#id').val('');
 
@@ -81,7 +71,7 @@ $(document).ready(function () {
 
     $(window).on('click', function (e) {
 
-        if ($(e.target).is('#modalPaciente')) {
+        if ($(e.target).is('#modalProfissional')) {
             modal.hide();
         }
 
@@ -99,33 +89,25 @@ $(document).ready(function () {
 
         try {
 
-            const response = await fetch(`/pacientes/fetchData/${id}`);
+            const response = await fetch(`/profissionais/fetchData/${id}`);
 
-            const paciente = await response.json();
+            const profissional = await response.json();
 
-            $('#modalTitulo').text('Editar Paciente');
+            $('#modalTitulo').text('Editar Profissional');
 
-            $('#id').val(paciente.id);
-            $('#nome').val(paciente.nome);
-            $('#cpf').val(paciente.cpf);
-            $('#telefone').val(paciente.telefone);
-            $('#email').val(paciente.email);
-            $('#endereco').val(paciente.endereco);
-
-            if (paciente.data_nascimento) {
-
-                $('#data_nascimento').val(
-                    paciente.data_nascimento.split('T')[0]
-                );
-
-            }
+            $('#id').val(profissional.id);
+            $('#nome').val(profissional.nome);
+            $('#crm').val(profissional.crm);
+            $('#especialidade').val(profissional.especialidade);
+            $('#telefone').val(profissional.telefone);
+            $('#email').val(profissional.email);
 
             modal.show();
 
         } catch (err) {
 
             console.error(err);
-            alert('Erro ao carregar paciente.');
+            alert('Erro ao carregar profissional.');
 
         }
 
@@ -137,7 +119,7 @@ $(document).ready(function () {
     |--------------------------------------------------------------------------
     */
 
-    $('#formPaciente').on('submit', async function (e) {
+    $('#formProfissional').on('submit', async function (e) {
 
         e.preventDefault();
 
@@ -148,16 +130,15 @@ $(document).ready(function () {
             action,
             id: $('#id').val(),
             nome: $('#nome').val(),
-            cpf: $('#cpf').val(),
-            data_nascimento: $('#data_nascimento').val(),
+            crm: $('#crm').val(),
+            especialidade: $('#especialidade').val(),
             telefone: $('#telefone').val(),
             email: $('#email').val(),
-            endereco: $('#endereco').val()
         };
 
         try {
 
-            const response = await fetch('/pacientes/submitData', {
+            const response = await fetch('/profissionais/submitData', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -193,14 +174,14 @@ $(document).ready(function () {
         const id = $(this).data('id');
 
         const confirmar = confirm(
-            'Deseja realmente excluir este paciente?'
+            'Deseja realmente excluir este profissional?'
         );
 
         if (!confirmar) return;
 
         try {
 
-            const response = await fetch('/pacientes/submitData', {
+            const response = await fetch('/profissionais/submitData', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

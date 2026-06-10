@@ -1,4 +1,5 @@
 import ProfissionalModel from '../models/profissionalModel.js';
+import crypto from 'crypto';
 
 export default class PacienteDAO {
 
@@ -23,7 +24,15 @@ export default class PacienteDAO {
                 return ProfissionalModel.constructFromObject(data)
             })
 
-            return profissionais;
+            const [totalRows] = await this.connection.query(
+                'SELECT COUNT(*) as total FROM profissionais'
+            );
+
+            return {
+                data: profissionais,
+                total: totalRows[0].total
+            };
+
         } catch (err) {
             console.log(err)
         }
@@ -40,12 +49,12 @@ export default class PacienteDAO {
         let message;
 
         if (action === 'Insert') {
-            query = `INSERT INTO profissionais (id, nome, crm, especialidade, telefone, email) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-            queryData = [profissional.id, profissional.nome, profissional.crm, profissional.especialidade, profissional.telefone, profissional.email];
+            query = `INSERT INTO profissionais (id, nome, crm, especialidade, telefone, email) VALUES (?, ?, ?, ?, ?, ?)`;
+            queryData = [crypto.randomUUID(), profissional.nome, profissional.crm, profissional.especialidade, profissional.telefone, profissional.email];
             message = 'Dados foi inserido!';
         } else if (action === 'Edit') {
             query = `UPDATE profissionais SET nome = ?, crm = ?, especialidade = ?, telefone = ?, email = ? WHERE id = ?`;
-            queryData = [profissional.nome, profissional.crm, profissional.especialidade, profissional.telefone, profissional.email];
+            queryData = [profissional.nome, profissional.crm, profissional.especialidade, profissional.telefone, profissional.email, profissional.id];
             message = 'Dados atualizados!';
         } else if (action === 'Delete') {
             query = `DELETE FROM profissionais WHERE id = ?`;

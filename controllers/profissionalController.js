@@ -11,8 +11,14 @@ export default class ProfissionalController {
     }
     static async fetchData(req, res) {
         try {
-            const data = await DAO.fetchAll(req.query);
-            res.json(data)
+            const result = await DAO.fetchAll(req.query);
+
+            res.json({
+                draw: Number(req.query.draw),
+                recordsTotal: result.total,
+                recordsFiltered: result.total,
+                data: result.data
+            });
         } catch (err) {
             console.error(err);
             return res.status(500).json({ error: 'Falha acessando os dados!' });

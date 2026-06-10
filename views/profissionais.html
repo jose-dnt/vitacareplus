@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/principal.css">
-    <link rel="stylesheet" href="/css/pacientes.css">
+    <link rel="stylesheet" href="/css/profissionais.css">
     <link rel="icon" type="image/png" href="/images/logoFavicon.png">
 </head>
 
@@ -37,28 +37,27 @@
         <main class="conteudo">
 
             <h2 class="titulo-pagina">
-                Pacientes Cadastrados
+                Profissionais Cadastrados
             </h2>
 
             <div class="topo-tabela">
-                <button id="btnNovoPaciente" class="btn-adicionar">
-                    + Novo Paciente
+                <button id="btnNovoProfissional" class="btn-adicionar">
+                    + Novo Profissional
                 </button>
             </div>
 
             <!-- TABELA -->
-            <div class="tabela-pacientes">
+            <div class="tabela-profissionais">
 
-                <table id="tabelaPacientes" class="display">
+                <table id="tabelaProfissionais" class="display">
 
                     <thead>
                         <tr>
                             <th>Nome</th>
-                            <th>CPF</th>
-                            <th>Data de Nascimento</th>
+                            <th>CRM</th>
+                            <th>Especialidade</th>
                             <th>Telefone</th>
                             <th>Email</th>
-                            <th>Endereço</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -75,14 +74,14 @@
     </div>
 
     <!-- Modal -->
-    <div id="modalPaciente" class="modal">
+    <div id="modalProfissional" class="modal">
         <div class="modal-content">
 
             <span class="fechar">&times;</span>
 
-            <h3 id="modalTitulo">Novo Paciente</h3>
+            <h3 id="modalTitulo">Novo Profissional</h3>
 
-            <form id="formPaciente">
+            <form id="formProfissional">
 
                 <input type="hidden" id="id">
 
@@ -92,13 +91,13 @@
                 </div>
 
                 <div class="campo">
-                    <label for="cpf">CPF</label>
-                    <input type="text" id="cpf" required>
+                    <label for="crm">CRM</label>
+                    <input type="text" id="crm" required>
                 </div>
 
                 <div class="campo">
-                    <label for="data_nascimento">Data de Nascimento</label>
-                    <input type="date" id="data_nascimento" required>
+                    <label for="especialidade">Especialidade</label>
+                    <input type="text" id="especialidade" required>
                 </div>
 
                 <div class="campo">
@@ -109,11 +108,6 @@
                 <div class="campo">
                     <label for="email">Email</label>
                     <input type="email" id="email" required>
-                </div>
-
-                <div class="campo">
-                    <label for="endereco">Endereço</label>
-                    <input type="text" id="endereco" required>
                 </div>
 
                 <button type="submit" class="btn-salvar">
@@ -128,7 +122,7 @@
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
-    <script src="/js/pacientes.js"></script>
+    <script src="/js/profissionais.js"></script>
 
 </body>
 

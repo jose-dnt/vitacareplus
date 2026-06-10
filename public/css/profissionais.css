@@ -10,25 +10,25 @@ body {
     margin-bottom: 15px;
 }
 
-.tabela-pacientes {
+.tabela-profissionais {
     background: rgba(255, 255, 255, .85);
     border-radius: 16px;
     padding: 25px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, .08);
 }
 
-.tabela-pacientes table {
+.tabela-profissionais table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.tabela-pacientes th {
+.tabela-profissionais th {
     background: #991B1B;
     color: white;
     padding: 14px;
 }
 
-.tabela-pacientes td {
+.tabela-profissionais td {
     padding: 14px;
     border-bottom: 1px solid #e5e7eb;
 }

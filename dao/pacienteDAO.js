@@ -1,4 +1,5 @@
 import PacienteModel from '../models/pacienteModel.js';
+import crypto from 'crypto';
 
 export default class PacienteDAO {
 
@@ -9,7 +10,7 @@ export default class PacienteDAO {
     async fetchAll(queryData) {
 
         const { start, length, search } = queryData;
-        const search_value = search.value;
+        const search_value = search?.value || "";
 
         const search_query = search_value ? ` WHERE nome LIKE '%${search_value}%' OR cpf LIKE '%${search_value}%' OR telefone LIKE '%${search_value}%' OR email LIKE '%${search_value}%' OR endereco LIKE '%${search_value}%'` : '';
 
@@ -23,7 +24,15 @@ export default class PacienteDAO {
                 return PacienteModel.constructFromObject(data)
             })
 
-            return pacientes;
+            const [totalRows] = await this.connection.query(
+                'SELECT COUNT(*) as total FROM pacientes'
+            );
+
+            return {
+                data: pacientes,
+                total: totalRows[0].total
+            };
+
         } catch (err) {
             console.log(err)
         }
@@ -41,11 +50,11 @@ export default class PacienteDAO {
 
         if (action === 'Insert') {
             query = `INSERT INTO pacientes (id, nome, cpf, data_nascimento, telefone, email, endereco) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-            queryData = [paciente.id, paciente.nome, paciente.cpf, paciente.data_nascimento, paciente.telefone, paciente.email, paciente.endereco];
+            queryData = [crypto.randomUUID(), paciente.nome, paciente.cpf, paciente.data_nascimento, paciente.telefone, paciente.email, paciente.endereco];
             message = 'Dados foi inserido!';
         } else if (action === 'Edit') {
             query = `UPDATE pacientes SET nome = ?, cpf = ?, data_nascimento = ?, telefone = ?, email = ?, endereco = ? WHERE id = ?`;
-            queryData = [paciente.nome, paciente.cpf, paciente.data_nascimento, paciente.telefone, paciente.email, paciente.endereco];
+            queryData = [paciente.nome, paciente.cpf, paciente.data_nascimento, paciente.telefone, paciente.email, paciente.endereco, paciente.id];
             message = 'Dados atualizados!';
         } else if (action === 'Delete') {
             query = `DELETE FROM pacientes WHERE id = ?`;
@@ -63,7 +72,7 @@ export default class PacienteDAO {
         }
     }
 
-    static async fetchSingle(id) {
+    async fetchSingle(id) {
         const query = `SELECT * FROM pacientes WHERE id = ?`;
 
         try {
