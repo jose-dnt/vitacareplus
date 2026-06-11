@@ -11,8 +11,8 @@ export default class ProfissionalService {
         try {
             const result = await DAO.fetchAll(query);
 
-            const profissionais = result.data.map((data) => {
-                return ProfissionalModel.constructFromObject(data)
+            const profissionais = result.data.map((row) => {
+                return ProfissionalModel.constructFromObject(row)
             })
 
             return {

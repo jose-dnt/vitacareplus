@@ -11,8 +11,8 @@ export default class DisponibilidadeService {
         try {
             const result = await DAO.fetchAll(query);
 
-            const disponibilidades = result.data.map((data) => {
-                return DisponibilidadeModel.constructFromObject(data)
+            const disponibilidades = result.data.map((row) => {
+                return DisponibilidadeModel.constructFromObject(row)
             })
 
             return {

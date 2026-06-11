@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise';
+import crypto from 'crypto';
 
 let connection = null;
-
 
 export async function conectarBanco() {
     if (connection) return connection;
@@ -30,7 +30,7 @@ export async function conectarBanco() {
 }
 
 async function criarTabelas() {
-	await connection.query(`
+    await connection.query(`
         CREATE TABLE IF NOT EXISTS pacientes (
             id VARCHAR(36) PRIMARY KEY,
             nome VARCHAR(100) NOT NULL,
@@ -42,7 +42,7 @@ async function criarTabelas() {
         )
     `);
 
-	await connection.query(`
+    await connection.query(`
         CREATE TABLE IF NOT EXISTS profissionais (
             id VARCHAR(36) PRIMARY KEY,
             nome VARCHAR(100) NOT NULL,
@@ -53,7 +53,7 @@ async function criarTabelas() {
         )
     `);
 
-	await connection.query(`
+    await connection.query(`
         CREATE TABLE IF NOT EXISTS consultas (
             id VARCHAR(36) PRIMARY KEY,
             paciente_id VARCHAR(36) NOT NULL,
@@ -69,7 +69,7 @@ async function criarTabelas() {
         )
     `);
 
-	await connection.query(`
+    await connection.query(`
         CREATE TABLE IF NOT EXISTS disponibilidade (
             id VARCHAR(36) PRIMARY KEY,
             profissional_id VARCHAR(36) NOT NULL,
@@ -80,7 +80,7 @@ async function criarTabelas() {
         )
     `);
 
-	await connection.query(`
+    await connection.query(`
         CREATE TABLE IF NOT EXISTS usuarios (
             id VARCHAR(36) PRIMARY KEY,
             nome VARCHAR(100) NOT NULL,
@@ -89,25 +89,80 @@ async function criarTabelas() {
         )
     `);
 
-	console.log('Tabelas criadas');
+    console.log('Tabelas criadas');
 }
 
 async function inserirDados() {
-	await connection.query(`
+    const paciente1 = '82cb25f8-e103-4859-a2a8-4ba913ee4bd5';
+    const paciente2 = '008c9093-61be-463f-bc4f-c505f1cfbe76';
+
+    const profissional1 = 'c3c409e1-1a65-4b69-915b-ab5a807b9ef1';
+    const profissional2 = '293dc3f1-87c6-4bc2-973e-39aaf959edaf';
+
+    const consulta1 = '55294fc0-77d0-4e32-bf51-076df5610737';
+    const consulta2 = '66fcf44e-07c4-4ca5-8aab-212f0fff842f';
+
+    await connection.query(`
         INSERT IGNORE INTO pacientes
         (id, nome, cpf, data_nascimento, telefone, email, endereco)
         VALUES
-        (UUID(), 'João Silva', '12345678900', '1990-05-10', '82999999999', 'joao@gmail.com', 'Rua A'),
-        (UUID(), 'Maria Souza', '98765432100', '1985-08-22', '82988888888', 'maria@gmail.com', 'Rua B')
-    `);
+        (?, 'João Silva', '12345678900', '1990-05-10', '82999999999', 'joao@gmail.com', 'Rua A'),
+        (?, 'Maria Souza', '98765432100', '1985-08-22', '82988888888', 'maria@gmail.com', 'Rua B')
+    `, [paciente1, paciente2]);
 
-	await connection.query(`
+    await connection.query(`
         INSERT IGNORE INTO profissionais
         (id, nome, crm, especialidade, telefone, email)
         VALUES
-        (UUID(), 'Dr. Carlos', 'CRM123', 'Cardiologia', '82911111111', 'carlos@clinica.com'),
-        (UUID(), 'Dra. Ana', 'CRM456', 'Pediatria', '82922222222', 'ana@clinica.com')
-    `);
+        (?, 'Dr. Carlos', 'CRM123', 'Cardiologia', '82911111111', 'carlos@clinica.com'),
+        (?, 'Dra. Ana', 'CRM456', 'Pediatria', '82922222222', 'ana@clinica.com')
+    `, [profissional1, profissional2]);
 
-	console.log('Dados inseridos');
+    await connection.query(`
+        INSERT IGNORE INTO consultas
+        (
+            id,
+            paciente_id,
+            profissional_id,
+            data,
+            horario,
+            status,
+            diagnostico,
+            prescricao,
+            observacoes
+        )
+        VALUES
+        (
+            ?,
+            ?,
+            ?,
+            '2025-06-15',
+            '09:00:00',
+            'agendada',
+            NULL,
+            NULL,
+            'Primeira consulta'
+        ),
+        (
+            ?,
+            ?,
+            ?,
+            '2025-06-16',
+            '14:30:00',
+            'realizada',
+            'Hipertensão leve',
+            'Monitorar pressão arterial',
+            'Retorno em 30 dias'
+        )
+    `, [
+        consulta1,
+        paciente1,
+        profissional1,
+
+        consulta2,
+        paciente2,
+        profissional2
+    ]);
+
+    console.log('Dados inseridos');
 }

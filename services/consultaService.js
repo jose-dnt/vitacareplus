@@ -11,8 +11,8 @@ export default class ConsultaService {
         try {
             const result = await DAO.fetchAll(query);
 
-            const consultas = result.data.map((data) => {
-                return ConsultaModel.constructFromObject(data)
+            const consultas = result.data.map((row) => {
+                return ConsultaModel.constructFromObject(row)
             })
 
             return {
@@ -28,11 +28,19 @@ export default class ConsultaService {
 
     static async submitData(body) {
         try {
-            const {action, ...data} = body;
+            const { action, ...data } = body;
             const result = await DAO.submitData(action, data);
             return result;
         } catch (err) {
             console.error(err);
+        }
+    }
+
+    static async updateStatus(id, status) {
+        try {
+            await DAO.updateStatus(id, status)
+        } catch (err) {
+            console.log(err);
         }
     }
 

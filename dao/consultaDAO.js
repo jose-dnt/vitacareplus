@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 export default class ConsultaDAO {
 
     constructor(connection) {
@@ -6,9 +8,13 @@ export default class ConsultaDAO {
 
     async fetchAll(queryData) {
 
-        const { start, length } = queryData;
+        const { start, length, status } = queryData;
 
-        const query = `SELECT c.id, pa.id AS paciente_id, pa.nome AS paciente_nome, pr.id AS profissional_id, pr.nome AS profissional_nome, c.data, c.horario, c.status, c.diagnostico, c.prescricao, c.observacoes FROM consultas c, pacientes pa, profissionais pr WHERE c.paciente_id = pa.id AND c.profissional_id = pr.id ORDER BY c.data DESC, c.horario DESC LIMIT ${start}, ${length}`;
+        let query = `SELECT c.id, pa.id AS paciente_id, pa.nome AS paciente_nome, pr.id AS profissional_id, pr.nome AS profissional_nome, c.data, c.horario, c.status, c.diagnostico, c.prescricao, c.observacoes FROM consultas c, pacientes pa, profissionais pr WHERE c.paciente_id = pa.id AND c.profissional_id = pr.id ORDER BY c.data DESC, c.horario DESC`;
+
+        if (start !== undefined && length !== undefined) {
+            query += ` LIMIT ${start}, ${length}`;
+        }
 
         try {
 
@@ -37,11 +43,11 @@ export default class ConsultaDAO {
 
         if (action === 'Insert') {
             query = `INSERT INTO consultas (id, paciente_id, profissional_id, data, horario, status, diagnostico, prescricao, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            queryData = [data.id, data.paciente_id, data.profissional_id, data.data, data.horario, data.status, data.diagnostico, data.prescricao, data.observacoes];
+            queryData = [crypto.randomUUID(), data.paciente_id, data.profissional_id, data.data, data.horario, data.status, data.diagnostico, data.prescricao, data.observacoes];
             message = 'Dados foi inserido!';
         } else if (action === 'Edit') {
-            query = `UPDATE consultas SET paciente_id = ?, profissional_id = ?, data = ?, horario = ?, status = ?, diagnostico = ?, prescricao = ?, observacoes = ? WHERE id = ?`;
-            queryData = [data.paciente_id, data.profissional_id, data.data, data.horario, data.status, data.diagnostico, data.prescricao, data.observacoes, data.id];
+            query = `UPDATE consultas SET paciente_id = ?, profissional_id = ?, data = ?, horario = ?, diagnostico = ?, prescricao = ?, observacoes = ? WHERE id = ?`;
+            queryData = [data.paciente_id, data.profissional_id, data.data, data.horario, data.diagnostico, data.prescricao, data.observacoes, data.id];
             message = 'Dados atualizados!';
         } else if (action === 'Delete') {
             query = `DELETE FROM consultas WHERE id = ?`;
@@ -59,11 +65,20 @@ export default class ConsultaDAO {
         }
     }
 
-    async fetchSingle(id) {
-        const query = `SELECT * FROM consultas WHERE id = ?`;
-
+    async updateStatus(id, status) {
         try {
-            const [rows] = await this.connection.query(query, [id]);
+            await this.connection.query(
+                'UPDATE consultas SET status = ? WHERE id = ?',
+                [status, id]
+            );
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async fetchSingle(id) {
+        try {
+            const [rows] = await this.connection.query(`SELECT * FROM consultas WHERE id = ?`, [id]);
             return rows[0];
         } catch (err) {
             console.log(err)

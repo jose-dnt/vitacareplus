@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>VitaCare+</title>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/principal.css">
     <link rel="stylesheet" href="/css/consultas.css">
@@ -41,9 +42,18 @@
             </h2>
 
             <div class="topo-tabela">
+
+                <select id="filtroStatus" class="filtro-status">
+                    <option value="">Todos os status</option>
+                    <option value="agendada">Agendadas</option>
+                    <option value="realizada">Realizadas</option>
+                    <option value="cancelada">Canceladas</option>
+                </select>
+
                 <button id="btnNovaConsulta" class="btn-adicionar">
                     + Nova Consulta
                 </button>
+
             </div>
 
             <!-- TABELA -->
@@ -107,11 +117,6 @@
                 <div class="campo">
                     <label for="horario">Horário</label>
                     <input type="time" id="horario" required>
-                </div>
-
-                <div class="campo">
-                    <label for="status">Status</label>
-                    <input type="text" id="status" required>
                 </div>
 
                 <button type="submit" class="btn-salvar">

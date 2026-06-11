@@ -1,6 +1,7 @@
 async function carregarPacientes() {
+
     try {
-        const response = await fetch('/pacientes/fetchData?');
+        const response = await fetch('/pacientes/fetchData');
         const pacientes = await response.json();
 
         console.log(pacientes)
@@ -10,7 +11,7 @@ async function carregarPacientes() {
         selectPaciente.innerHTML =
             '<option value="">Selecione um paciente</option>';
 
-        pacientes.forEach(paciente => {
+        pacientes.data.forEach(paciente => {
             selectPaciente.innerHTML += `
                 <option value="${paciente.id}">
                     ${paciente.nome}
@@ -33,7 +34,7 @@ async function carregarProfissionais() {
         selectProfissional.innerHTML =
             '<option value="">Selecione um profissional</option>';
 
-        profissionais.forEach(profissional => {
+        profissionais.data.forEach(profissional => {
             selectProfissional.innerHTML += `
                 <option value="${profissional.id}">
                     ${profissional.nome} - ${profissional.especialidade}
@@ -45,6 +46,7 @@ async function carregarProfissionais() {
         console.error('Erro ao carregar profissionais:', error);
     }
 }
+
 
 $(document).ready(function () {
 
@@ -95,7 +97,42 @@ $(document).ready(function () {
                 }
             },
             { data: 'horario' },
-            { data: 'status' },
+            {
+                data: 'status',
+                render: function (data, type, row) {
+
+                    if (type === 'filter' || type === 'sort') {
+                        return data;
+                    }
+                    
+                    return `
+            <div class="status-group">
+
+                <button
+                    class="status-btn agendada ${row.status === 'agendada' ? 'active' : ''}"
+                    data-id="${row.id}"
+                    data-status="agendada">
+                    <i class="fa-solid fa-calendar"></i>
+                </button>
+
+                <button
+                    class="status-btn realizada ${row.status === 'realizada' ? 'active' : ''}"
+                    data-id="${row.id}"
+                    data-status="realizada">
+                    <i class="fa-solid fa-circle-check"></i>
+                </button>
+
+                <button
+                    class="status-btn cancelada ${row.status === 'cancelada' ? 'active' : ''}"
+                    data-id="${row.id}"
+                    data-status="cancelada">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+
+            </div>
+        `;
+                }
+            },
             {
                 data: 'id',
                 render: function (id) {
@@ -117,6 +154,26 @@ $(document).ready(function () {
             url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
         }
 
+    });
+
+    $(document).on('click', '.status-btn', async function () {
+
+        const id = $(this).data('id');
+        const status = $(this).data('status');
+
+        await fetch(`/consultas/status/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
+        });
+
+        tabela.ajax.reload(null, false);
+    });
+
+    $('#filtroStatus').on('change', function () {
+        tabela.column(4).search($(this).val()).draw();
     });
 
     /*
@@ -240,8 +297,6 @@ $(document).ready(function () {
 
             await carregarPacientes();
             await carregarProfissionais();
-
-            $('.modal-titulo').text('Nova Consulta');
 
             $('#formConsulta')[0].reset();
 

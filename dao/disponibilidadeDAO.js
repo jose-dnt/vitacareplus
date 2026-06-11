@@ -1,4 +1,4 @@
-import DisponibilidadeModel from '../models/disponibilidadeModel.js';
+import crypto from 'crypto';
 
 export default class DisponibilidadeDAO {
 
@@ -9,32 +9,36 @@ export default class DisponibilidadeDAO {
     async fetchAll(queryData) {
 
         const { start, length, search } = queryData;
-
-        const search_value = search.value;
+        const search_value = search?.value || "";
 
         const search_query = search_value ? ` WHERE profissional_id = '%${search_value}%'` : '';
 
-        const query = `SELECT id, dia_semana, hora_inicio, hora_fim FROM disponibilidade WHERE ${search_query} LIMIT ${start}, ${length}`;
+        let query = `SELECT id, dia_semana, hora_inicio, hora_fim FROM disponibilidade WHERE ${search_query}`;
+
+        if (start !== undefined && length !== undefined) {
+            query += ` LIMIT ${start}, ${length}`;
+        }
 
         try {
 
             const [rows] = await this.connection.query(query)
 
-            const disponibilidades = rows.map((data) => {
-                return DisponibilidadeModel.constructFromObject(data)
-            })
+            const [totalRows] = await this.connection.query(
+                'SELECT COUNT(*) as total FROM pacientes'
+            );
 
-            return disponibilidades;
+            return {
+                data: rows,
+                total: totalRows[0].total
+            };
+
         } catch (err) {
             console.log(err)
         }
 
     }
 
-    async submitData(data) {
-
-        const { action, ...disponibilidadeData } = data;
-        const disponibilidade = DisponibilidadeModel.constructFromObject(disponibilidadeData)
+    async submitData(action, data) {
 
         let query;
         let queryData;
@@ -42,15 +46,15 @@ export default class DisponibilidadeDAO {
 
         if (action === 'Insert') {
             query = `INSERT INTO disponibilidades (id, profissional_id, dia_semana, hora_inicio, hora_fim) VALUES (?, ?, ?, ?, ?)`;
-            queryData = [disponibilidade.id, disponibilidade.profissional_id, disponibilidade.dia_semana, disponibilidade.hora_inicio, disponibilidade.hora_fim];
+            queryData = [crypto.randomUUID(), data.profissional_id, data.dia_semana, data.hora_inicio, data.hora_fim];
             message = 'Dados foi inserido!';
         } else if (action === 'Edit') {
             query = `UPDATE disponibilidades SET profissional_id = ?, dia_semana = ?, hora_inicio = ?, hora_fim = ? WHERE id = ?`;
-            queryData = [disponibilidade.profissional_id, disponibilidade.dia_semana, disponibilidade.hora_inicio, disponibilidade.hora_fim, disponibilidade.id];
+            queryData = [data.profissional_id, data.dia_semana, data.hora_inicio, data.hora_fim, data.id];
             message = 'Dados atualizados!';
         } else if (action === 'Delete') {
             query = `DELETE FROM disponibilidades WHERE id = ?`;
-            queryData = [disponibilidade.id];
+            queryData = [data.id];
             message = 'Deletado!';
         } else {
             throw new Error('Ação inválida!');
@@ -65,12 +69,9 @@ export default class DisponibilidadeDAO {
     }
 
     async fetchSingle(id) {
-        const query = `SELECT * FROM disponibilidades WHERE id = ?`;
-
         try {
-            const [rows] = await this.connection.query(query, [id]);
-            const disponibilidade = DisponibilidadeModel.constructFromObject(rows[0]);
-            return disponibilidade;
+            const [rows] = await this.connection.query(`SELECT * FROM disponibilidades WHERE id = ?`, [id]);
+            return rows[0];
         } catch (err) {
             console.log(err)
         }

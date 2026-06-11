@@ -7,5 +7,6 @@ router.get('/', ConsultaController.index);
 
 // Rotas da API
 router.get('/fetchData', ConsultaController.fetchData);
-router.post('/submitData', ConsultaController.submitData);
 router.get('/fetchData/:id', ConsultaController.fetchSingle);
+router.post('/submitData', ConsultaController.submitData);
+router.put('/status/:id', ConsultaController.updateStatus);

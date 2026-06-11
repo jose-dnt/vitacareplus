@@ -1,4 +1,3 @@
-import UsuarioModel from '../models/usuarioModel.js';
 import crypto from 'crypto';
 
 export default class UsuarioDAO {
@@ -8,20 +7,15 @@ export default class UsuarioDAO {
     }
 
     async fetchUsuario(email) {
-        const query = `SELECT * FROM usuarios WHERE email = ?`;
-
         try {
-            const [rows] = await this.connection.query(query, [email]);
-            const usuario = UsuarioModel.constructFromObject(rows[0]);
-            return usuario;
+            const [rows] = await this.connection.query(`SELECT * FROM usuarios WHERE email = ?`, [email]);
+            return rows[0];
         } catch (err) {
             console.log(err)
         }
     }
 
-    async criarUsuario(data) {
-
-        const usuario = UsuarioModel.constructFromObject(data)
+    async criarUsuario(usuario) {
 
         try {
             await this.connection.query(

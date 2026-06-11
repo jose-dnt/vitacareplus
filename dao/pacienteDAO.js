@@ -1,4 +1,3 @@
-import PacienteModel from '../models/pacienteModel.js';
 import crypto from 'crypto';
 
 export default class PacienteDAO {
@@ -14,22 +13,22 @@ export default class PacienteDAO {
 
         const search_query = search_value ? ` WHERE nome LIKE '%${search_value}%' OR cpf LIKE '%${search_value}%' OR telefone LIKE '%${search_value}%' OR email LIKE '%${search_value}%' OR endereco LIKE '%${search_value}%'` : '';
 
-        const query = `SELECT id, nome, cpf, data_nascimento, telefone, email, endereco FROM pacientes ${search_query}` + (start && length) ? `LIMIT ${start}, ${length}` : "";
+        let query = `SELECT id, nome, cpf, data_nascimento, telefone, email, endereco FROM pacientes ${search_query}`;
+
+        if (start !== undefined && length !== undefined) {
+            query += ` LIMIT ${start}, ${length}`;
+        }
 
         try {
 
             const [rows] = await this.connection.query(query)
-
-            const pacientes = rows.map((data) => {
-                return PacienteModel.constructFromObject(data)
-            })
 
             const [totalRows] = await this.connection.query(
                 'SELECT COUNT(*) as total FROM pacientes'
             );
 
             return {
-                data: pacientes,
+                data: rows,
                 total: totalRows[0].total
             };
 
@@ -39,10 +38,7 @@ export default class PacienteDAO {
 
     }
 
-    async submitData(data) {
-
-        const { action, ...pacienteData } = data;
-        const paciente = PacienteModel.constructFromObject(pacienteData)
+    async submitData(action, data) {
 
         let query;
         let queryData;
@@ -50,15 +46,15 @@ export default class PacienteDAO {
 
         if (action === 'Insert') {
             query = `INSERT INTO pacientes (id, nome, cpf, data_nascimento, telefone, email, endereco) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-            queryData = [crypto.randomUUID(), paciente.nome, paciente.cpf, paciente.data_nascimento, paciente.telefone, paciente.email, paciente.endereco];
+            queryData = [crypto.randomUUID(), data.nome, data.cpf, data.data_nascimento, data.telefone, data.email, data.endereco];
             message = 'Dados foi inserido!';
         } else if (action === 'Edit') {
             query = `UPDATE pacientes SET nome = ?, cpf = ?, data_nascimento = ?, telefone = ?, email = ?, endereco = ? WHERE id = ?`;
-            queryData = [paciente.nome, paciente.cpf, paciente.data_nascimento, paciente.telefone, paciente.email, paciente.endereco, paciente.id];
+            queryData = [data.nome, data.cpf, data.data_nascimento, data.telefone, data.email, data.endereco, data.id];
             message = 'Dados atualizados!';
         } else if (action === 'Delete') {
             query = `DELETE FROM pacientes WHERE id = ?`;
-            queryData = [paciente.id];
+            queryData = [data.id];
             message = 'Deletado!';
         } else {
             throw new Error('Ação inválida!');
@@ -73,12 +69,9 @@ export default class PacienteDAO {
     }
 
     async fetchSingle(id) {
-        const query = `SELECT * FROM pacientes WHERE id = ?`;
-
         try {
-            const [rows] = await this.connection.query(query, [id]);
-            const paciente = PacienteModel.constructFromObject(rows[0]);
-            return paciente;
+            const [rows] = await this.connection.query(`SELECT * FROM pacientes WHERE id = ?`, [id]);
+            return rows[0];
         } catch (err) {
             console.log(err)
         }

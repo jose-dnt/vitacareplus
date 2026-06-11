@@ -25,6 +25,21 @@ export default class ConsultaController {
         }
     }
 
+    static async updateStatus(req, res) {
+        try {
+            const { id } = req.params;
+            const { status } = req.body;
+
+            await ConsultaService.updateStatus(id, status);
+
+            res.json('Status atualizado!');
+
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({ error: 'Falha ao atualizar status da consulta!' })
+        }
+    }
+
     static async fetchSingle(req, res) {
         try {
             const data = await ConsultaService.fetchSingle(req.params.id)

@@ -11,8 +11,8 @@ export default class PacienteService {
         try {
             const result = await DAO.fetchAll(query);
 
-            const pacientes = result.data.map((data) => {
-                return PacienteModel.constructFromObject(data)
+            const pacientes = result.data.map((row) => {
+                return PacienteModel.constructFromObject(row)
             })
 
             return {

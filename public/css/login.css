@@ -4,14 +4,12 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
     transform: translateY(-100px);
 }
 
 .logo {
     width: 700px;
-    height: auto;
-    margin-bottom: 15px;
+    margin-bottom: -115px;
 }
 
 h2 {
@@ -72,6 +70,7 @@ input {
 .button-container {
     display: flex;
     justify-content: space-between;
+    margin-top: 10px;
 }
 
 button {
@@ -82,7 +81,6 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    
     font-size: 12px;
 }
 
@@ -98,7 +96,7 @@ button:hover {
 }
 
 .register-link {
-    color: #2c7be5; /* ou a cor principal do seu projeto */
+    color: #2c7be5;
     text-decoration: none;
     font-weight: bold;
 }

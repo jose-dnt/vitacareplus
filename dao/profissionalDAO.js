@@ -1,4 +1,3 @@
-import ProfissionalModel from '../models/profissionalModel.js';
 import crypto from 'crypto';
 
 export default class ProfissionalDAO {
@@ -10,26 +9,26 @@ export default class ProfissionalDAO {
     async fetchAll(queryData) {
 
         const { start, length, search } = queryData;
-        const search_value = search.value;
+        const search_value = search?.value || "";
 
         const search_query = search_value ? ` WHERE nome LIKE '%${search_value}%' OR crm LIKE '%${search_value}%' OR telefone LIKE '%${search_value}%' OR especialidade LIKE '%${search_value}%' OR email LIKE '%${search_value}%'` : '';
 
-        const query = `SELECT id, nome, crm, especialidade, telefone, email FROM profissionais ${search_query}` + (start && length) ? `LIMIT ${start}, ${length}` : "";
+        let query = `SELECT id, nome, crm, especialidade, telefone, email FROM profissionais ${search_query}`;
+
+        if (start !== undefined && length !== undefined) {
+            query += ` LIMIT ${start}, ${length}`;
+        }
 
         try {
 
             const [rows] = await this.connection.query(query)
-
-            const profissionais = rows.map((data) => {
-                return ProfissionalModel.constructFromObject(data)
-            })
 
             const [totalRows] = await this.connection.query(
                 'SELECT COUNT(*) as total FROM profissionais'
             );
 
             return {
-                data: profissionais,
+                data: rows,
                 total: totalRows[0].total
             };
 
@@ -39,10 +38,7 @@ export default class ProfissionalDAO {
 
     }
 
-    async submitData(data) {
-
-        const { action, ...profissionalData } = data;
-        const profissional = ProfissionalModel.constructFromObject(profissionalData)
+    async submitData(action, data) {
 
         let query;
         let queryData;
@@ -50,15 +46,15 @@ export default class ProfissionalDAO {
 
         if (action === 'Insert') {
             query = `INSERT INTO profissionais (id, nome, crm, especialidade, telefone, email) VALUES (?, ?, ?, ?, ?, ?)`;
-            queryData = [crypto.randomUUID(), profissional.nome, profissional.crm, profissional.especialidade, profissional.telefone, profissional.email];
+            queryData = [crypto.randomUUID(), data.nome, data.crm, data.especialidade, data.telefone, data.email];
             message = 'Dados foi inserido!';
         } else if (action === 'Edit') {
             query = `UPDATE profissionais SET nome = ?, crm = ?, especialidade = ?, telefone = ?, email = ? WHERE id = ?`;
-            queryData = [profissional.nome, profissional.crm, profissional.especialidade, profissional.telefone, profissional.email, profissional.id];
+            queryData = [data.nome, data.crm, data.especialidade, data.telefone, data.email, data.id];
             message = 'Dados atualizados!';
         } else if (action === 'Delete') {
             query = `DELETE FROM profissionais WHERE id = ?`;
-            queryData = [profissional.id];
+            queryData = [data.id];
             message = 'Deletado!';
         } else {
             throw new Error('Ação inválida!');
@@ -73,12 +69,9 @@ export default class ProfissionalDAO {
     }
 
     async fetchSingle(id) {
-        const query = `SELECT * FROM profissionais WHERE id = ?`;
-
         try {
-            const [rows] = await this.connection.query(query, [id]);
-            const profissional = ProfissionalModel.constructFromObject(rows[0]);
-            return profissional;
+            const [rows] = await this.connection.query(`SELECT * FROM profissionais WHERE id = ?`, [id]);
+            return rows[0];
         } catch (err) {
             console.log(err)
         }
