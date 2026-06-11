@@ -1,5 +1,3 @@
-import ConsultaModel from '../models/consultaModel.js';
-
 export default class ConsultaDAO {
 
     constructor(connection) {
@@ -16,16 +14,12 @@ export default class ConsultaDAO {
 
             const [rows] = await this.connection.query(query)
 
-            const consultas = rows.map((data) => {
-                return ConsultaModel.constructFromObject(data)
-            })
-
             const [totalRows] = await this.connection.query(
                 'SELECT COUNT(*) as total FROM consultas'
             );
 
             return {
-                data: consultas,
+                data: rows,
                 total: totalRows[0].total
             };
 
@@ -35,10 +29,7 @@ export default class ConsultaDAO {
 
     }
 
-    async submitData(data) {
-
-        const { action, ...consultaData } = data;
-        const consulta = ConsultaModel.constructFromObject(consultaData)
+    async submitData(action, data) {
 
         let query;
         let queryData;
@@ -46,15 +37,15 @@ export default class ConsultaDAO {
 
         if (action === 'Insert') {
             query = `INSERT INTO consultas (id, paciente_id, profissional_id, data, horario, status, diagnostico, prescricao, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            queryData = [consulta.id, consulta.paciente_id, consulta.profissional_id, consulta.data, consulta.horario, consulta.status, consulta.diagnostico, consulta.prescricao, consulta.observacoes];
+            queryData = [data.id, data.paciente_id, data.profissional_id, data.data, data.horario, data.status, data.diagnostico, data.prescricao, data.observacoes];
             message = 'Dados foi inserido!';
         } else if (action === 'Edit') {
             query = `UPDATE consultas SET paciente_id = ?, profissional_id = ?, data = ?, horario = ?, status = ?, diagnostico = ?, prescricao = ?, observacoes = ? WHERE id = ?`;
-            queryData = [consulta.paciente_id, consulta.profissional_id, consulta.data, consulta.horario, consulta.status, consulta.diagnostico, consulta.prescricao, consulta.observacoes, consulta.id];
+            queryData = [data.paciente_id, data.profissional_id, data.data, data.horario, data.status, data.diagnostico, data.prescricao, data.observacoes, data.id];
             message = 'Dados atualizados!';
         } else if (action === 'Delete') {
             query = `DELETE FROM consultas WHERE id = ?`;
-            queryData = [consulta.id];
+            queryData = [data.id];
             message = 'Deletado!';
         } else {
             throw new Error('Ação inválida!');
@@ -73,8 +64,7 @@ export default class ConsultaDAO {
 
         try {
             const [rows] = await this.connection.query(query, [id]);
-            const consulta = ConsultaModel.constructFromObject(rows[0]);
-            return consulta;
+            return rows[0];
         } catch (err) {
             console.log(err)
         }

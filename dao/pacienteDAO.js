@@ -14,7 +14,7 @@ export default class PacienteDAO {
 
         const search_query = search_value ? ` WHERE nome LIKE '%${search_value}%' OR cpf LIKE '%${search_value}%' OR telefone LIKE '%${search_value}%' OR email LIKE '%${search_value}%' OR endereco LIKE '%${search_value}%'` : '';
 
-        const query = `SELECT id, nome, cpf, data_nascimento, telefone, email, endereco FROM pacientes ${search_query} LIMIT ${start}, ${length}`;
+        const query = `SELECT id, nome, cpf, data_nascimento, telefone, email, endereco FROM pacientes ${search_query}` + (start && length) ? `LIMIT ${start}, ${length}` : "";
 
         try {
 

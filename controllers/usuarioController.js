@@ -1,10 +1,4 @@
-import UsuarioDAO from '../dao/usuarioDAO.js';
-import { conectarBanco } from '../db.js';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-
-const db = await conectarBanco()
-const DAO = new UsuarioDAO(db);
+import UsuarioService from '../services/usuarioService.js';
 
 export default class UsuarioController {
 
@@ -16,17 +10,8 @@ export default class UsuarioController {
         }
 
         try {
-            const usuario = await DAO.fetchUsuario(email)
-
-            console.log(usuario)
-
-            if (usuario) throw new Error("Usuário já existe")
-
-            const hash = await bcrypt.hash(senha, 10);
-
-            await DAO.criarUsuario({
-                nome, email, senha: hash
-            })
+            
+            await UsuarioService.register(nome, email, senha);
 
             res.redirect('/login');
 
@@ -40,25 +25,9 @@ export default class UsuarioController {
         try {
             const { email, senha } = req.body;
 
-            const [rows] = await db.query("SELECT * FROM usuarios WHERE email = ?", [email])
+            const token = await UsuarioService.login(email, senha)
 
-            if (rows.length === 0) {
-                throw new Error("Usuário não existe")
-            }
-
-            const usuario = rows[0];
-
-            const senhaValida = await bcrypt.compare(senha, usuario.senha);
-
-            if (!senhaValida) {
-                throw new Error("Senha inválida")
-            }
-
-            const token = jwt.sign(
-                { id: usuario.id },
-                process.env.JWT_SECRET,
-                { expiresIn: '15m' }
-            );
+            if (!token) throw new Error("Erro ao fazer login");
 
             res.cookie('token', token, {
                 httpOnly: true,

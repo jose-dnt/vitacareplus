@@ -10,7 +10,7 @@ export async function conectarBanco() {
         connection = await mysql.createConnection({
             host: 'localhost',
             user: 'root',
-            password: 'root'
+            password: ''
         });
 
         await connection.query('CREATE DATABASE IF NOT EXISTS projeto');

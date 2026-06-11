@@ -1,9 +1,5 @@
-import ProfissionalDAO from '../dao/profissionalDAO.js';
 import path from 'path';
-import { conectarBanco } from '../db.js';
-
-const db = await conectarBanco()
-const DAO = new ProfissionalDAO(db);
+import ProfissionalService from '../services/profissionalService.js';
 
 export default class ProfissionalController {
     static index(req, res) {
@@ -11,14 +7,8 @@ export default class ProfissionalController {
     }
     static async fetchData(req, res) {
         try {
-            const result = await DAO.fetchAll(req.query);
-
-            res.json({
-                draw: Number(req.query.draw),
-                recordsTotal: result.total,
-                recordsFiltered: result.total,
-                data: result.data
-            });
+            const data = await ProfissionalService.fetchData(req.query);
+            res.json(data);
         } catch (err) {
             console.error(err);
             return res.status(500).json({ error: 'Falha acessando os dados!' });
@@ -27,7 +17,7 @@ export default class ProfissionalController {
 
     static async submitData(req, res) {
         try {
-            const result = await DAO.submitData(req.body);
+            const result = await ProfissionalService.submitData(req.body);
             res.json(result)
         } catch (err) {
             console.error(err);
@@ -37,7 +27,7 @@ export default class ProfissionalController {
 
     static async fetchSingle(req, res) {
         try {
-            const data = await DAO.fetchSingle(req.params.id)
+            const data = await ProfissionalService.fetchSingle(req.params.id)
             res.json(data)
         } catch (err) {
             console.error(err);

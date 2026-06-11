@@ -1,6 +1,6 @@
 async function carregarPacientes() {
     try {
-        const response = await fetch('/pacientes/fetchData?start=0&');
+        const response = await fetch('/pacientes/fetchData?');
         const pacientes = await response.json();
 
         console.log(pacientes)

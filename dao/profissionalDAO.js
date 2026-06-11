@@ -14,7 +14,7 @@ export default class ProfissionalDAO {
 
         const search_query = search_value ? ` WHERE nome LIKE '%${search_value}%' OR crm LIKE '%${search_value}%' OR telefone LIKE '%${search_value}%' OR especialidade LIKE '%${search_value}%' OR email LIKE '%${search_value}%'` : '';
 
-        const query = `SELECT id, nome, crm, especialidade, telefone, email FROM profissionais ${search_query} LIMIT ${start}, ${length}`;
+        const query = `SELECT id, nome, crm, especialidade, telefone, email FROM profissionais ${search_query}` + (start && length) ? `LIMIT ${start}, ${length}` : "";
 
         try {
 

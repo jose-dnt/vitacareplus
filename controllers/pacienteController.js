@@ -1,9 +1,5 @@
-import PacienteDAO from '../dao/pacienteDAO.js';
 import path from 'path';
-import { conectarBanco } from '../db.js';
-
-const db = await conectarBanco()
-const DAO = new PacienteDAO(db);
+import PacienteService from '../services/pacienteService.js';
 
 export default class PacienteController {
     static index(req, res) {
@@ -11,14 +7,8 @@ export default class PacienteController {
     }
     static async fetchData(req, res) {
         try {
-            const result = await DAO.fetchAll(req.query);
-
-            res.json({
-                draw: Number(req.query.draw),
-                recordsTotal: result.total,
-                recordsFiltered: result.total,
-                data: result.data
-            });
+            const data = await PacienteService.fetchData(req.query);
+            res.json(data);
         } catch (err) {
             console.error(err);
             return res.status(500).json({ error: 'Falha acessando os dados!' });
@@ -27,7 +17,7 @@ export default class PacienteController {
 
     static async submitData(req, res) {
         try {
-            const result = await DAO.submitData(req.body);
+            const result = await PacienteService.submitData(req.body);
             res.json(result)
         } catch (err) {
             console.error(err);
@@ -37,7 +27,7 @@ export default class PacienteController {
 
     static async fetchSingle(req, res) {
         try {
-            const data = await DAO.fetchSingle(req.params.id)
+            const data = await PacienteService.fetchSingle(req.params.id)
             res.json(data)
         } catch (err) {
             console.error(err);
