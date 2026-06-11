@@ -1,5 +1,5 @@
 import express from 'express';
-import path, { dirname } from 'path';
+import path from 'path';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import bcrypt from 'bcryptjs';
@@ -11,6 +11,10 @@ const db = await conectarBanco();
 
 import { router as pacienteRouter } from './routes/pacienteRoutes.js';
 import { router as profissionalRouter } from './routes/profissionalRoutes.js';
+import { router as consultaRouter } from './routes/consultaRoutes.js';
+import { router as disponibilidadeRouter } from './routes/disponibilidadeRoutes.js';
+import { router as usuarioRouter } from './routes/usuarioRoutes.js';
+
 
 import dotenv from 'dotenv-safe';
 dotenv.config()
@@ -60,82 +64,6 @@ app.get('/register', (req, res) => {
 });
 
 // ======================
-// REGISTER
-// ======================
-app.post('/register', async (req, res) => {
-
-    const { nome, email, senha } = req.body;
-
-    if (!nome || !email || !senha) {
-        return res.redirect('/register?erro=true');
-    }
-
-    try {
-        const [rows] = await db.query("SELECT * FROM usuarios WHERE email = ?", [email]);
-
-        if (rows.length > 0) {
-            throw new Error("Usuário já existe")
-        }
-
-        const hash = await bcrypt.hash(senha, 10);
-
-        await db.query(
-            "INSERT INTO usuarios (id, nome, email, senha) VALUES (?, ?, ?, ?)",
-            [crypto.randomUUID(), nome, email, hash],
-        );
-
-        res.redirect('/login');
-
-    } catch (err) {
-        console.log(err);
-        return res.redirect('/register?erro=true');
-    }
-})
-// ======================
-// LOGIN
-// ======================
-app.post('/login', async (req, res) => {
-
-    try {
-        const { email, senha } = req.body;
-
-        const [rows] = await db.query("SELECT * FROM usuarios WHERE email = ?", [email])
-
-        if (rows.length === 0) {
-            throw new Error("Usuário não existe")
-        }
-
-        const usuario = rows[0];
-
-        const senhaValida = await bcrypt.compare(senha, usuario.senha);
-
-        if (!senhaValida) {
-            throw new Error("Senha inválida")
-        }
-
-        const token = jwt.sign(
-            { id: usuario.id },
-            process.env.JWT_SECRET,
-            { expiresIn: '15m' }
-        );
-
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: 'strict',
-            maxAge: 15 * 60 * 1000
-        });
-
-        res.redirect('/principal');
-
-    } catch (err) {
-        console.log(err);
-        return res.redirect('/login?erro=true');
-    }
-});
-
-
-// ======================
 // Página protegida
 // ======================
 app.get('/principal', verifyJWT, (req, res) => {
@@ -144,6 +72,9 @@ app.get('/principal', verifyJWT, (req, res) => {
 
 app.use("/pacientes", pacienteRouter);
 app.use("/profissionais", profissionalRouter);
+app.use("/consultas", consultaRouter);
+app.use("/disponibilidades", disponibilidadeRouter);
+app.use("/auth", usuarioRouter);
 
 app.get('/me', verifyJWT, async (req, res) => {
 

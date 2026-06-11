@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VitaCare+</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/principal.css">
+    <link rel="stylesheet" href="/css/consultas.css">
+    <link rel="icon" type="image/png" href="/images/logoFavicon.png">
+</head>
+
+<body>
+
+    <div class="layout">
+
+        <!-- MENU LATERAL -->
+        <aside class="menu">
+            <h1 class="logo">
+                Vita<span>Care</span><small>+</small>
+            </h1>
+
+            <nav>
+                <ul>
+                    <li class="py-2"><a href="/principal" class="hover:text-yellow-500">Dashboard</a></li>
+                    <li class="py-2"><a href="/pacientes" class="hover:text-yellow-500">Pacientes</a></li>
+                    <li class="py-2"><a href="/profissionais" class="hover:text-yellow-500">Profissionais</a></li>
+                    <li class="py-2"><a href="/consultas" class="hover:text-yellow-500">Consultas</a></li>
+                    <li class="py-2"><a href="/logout" class="hover:text-red-400">Sair</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="conteudo">
+
+            <h2 class="titulo-pagina">
+                Consultas Cadastradas
+            </h2>
+
+            <div class="topo-tabela">
+                <button id="btnNovaConsulta" class="btn-adicionar">
+                    + Nova Consulta
+                </button>
+            </div>
+
+            <!-- TABELA -->
+            <div class="tabela-consultas">
+
+                <table id="tabelaConsultas" class="display">
+
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Profissional</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Modal -->
+    <div id="modalConsulta" class="modal">
+        <div class="modal-content">
+
+            <span class="fechar">&times;</span>
+
+            <h3 class="modal-titulo">Nova Consulta</h3>
+
+            <form id="formConsulta">
+
+                <input type="hidden" id="id">
+
+                <div class="campo">
+                    <label for="paciente">Paciente</label>
+                    <select id="paciente" required>
+                        <option value="">Selecione um paciente</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="profissional">Profissional</label>
+                    <select id="profissional" required>
+                        <option value="">Selecione um profissional</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="data">Data</label>
+                    <input type="date" id="data" required>
+                </div>
+
+                <div class="campo">
+                    <label for="horario">Horário</label>
+                    <input type="time" id="horario" required>
+                </div>
+
+                <div class="campo">
+                    <label for="status">Status</label>
+                    <input type="text" id="status" required>
+                </div>
+
+                <button type="submit" class="btn-salvar">
+                    Salvar
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Modal Paciente -->
+    <div id="modalPaciente" class="modal">
+        <div class="modal-content">
+
+            <div class="flex justify-between items-center">
+                <h3 class="modal-titulo">Dados do Paciente</h3>
+
+                <span class="fecharPaciente fechar">&times;</span>
+            </div>
+            <div class="campo">
+                <label>Nome</label>
+                <input type="text" id="viewPacienteNome" readonly>
+            </div>
+
+            <div class="campo">
+                <label>CPF</label>
+                <input type="text" id="viewPacienteCpf" readonly>
+            </div>
+
+            <div class="campo">
+                <label>Data de Nascimento</label>
+                <input type="data" id="viewPacienteNascimento" readonly>
+            </div>
+
+            <div class="campo">
+                <label>Telefone</label>
+                <input type="text" id="viewPacienteTelefone" readonly>
+            </div>
+
+            <div class="campo">
+                <label>Email</label>
+                <input type="text" id="viewPacienteEmail" readonly>
+            </div>
+
+            <div class="campo">
+                <label>Endereço</label>
+                <input type="text" id="viewPacienteEndereco" readonly>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Profissional -->
+    <div id="modalProfissional" class="modal">
+        <div class="modal-content">
+
+            <div class="flex justify-between items-center">
+                <h3 class="modal-titulo">Dados do Profissional</h3>
+
+                <span class="fecharProfissional fechar">&times;</span>
+            </div>
+
+            <div class="campo">
+                <label>Nome</label>
+                <input type="text" id="viewProfissionalNome" readonly>
+            </div>
+
+            <div class="campo">
+                <label>CRM</label>
+                <input type="text" id="viewProfissionalCrm" readonly>
+            </div>
+
+            <div class="campo">
+                <label>Especialidade</label>
+                <input type="text" id="viewProfissionalEspecialidade" readonly>
+            </div>
+
+            <div class="campo">
+                <label>Telefone</label>
+                <input type="text" id="viewProfissionalTelefone" readonly>
+            </div>
+
+            <div class="campo">
+                <label>Email</label>
+                <input type="text" id="viewProfissionalEmail" readonly>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script src="/js/consultas.js"></script>
+
+</body>
+
+</html>

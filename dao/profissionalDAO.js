@@ -1,7 +1,7 @@
 import ProfissionalModel from '../models/profissionalModel.js';
 import crypto from 'crypto';
 
-export default class PacienteDAO {
+export default class ProfissionalDAO {
 
     constructor(connection) {
         this.connection = connection
@@ -72,7 +72,7 @@ export default class PacienteDAO {
         }
     }
 
-    static async fetchSingle(id) {
+    async fetchSingle(id) {
         const query = `SELECT * FROM profissionais WHERE id = ?`;
 
         try {

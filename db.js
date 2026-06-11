@@ -60,20 +60,11 @@ async function criarTabelas() {
             data DATE NOT NULL,
             horario TIME NOT NULL,
             status ENUM('agendada', 'realizada', 'cancelada') DEFAULT 'agendada',
-            observacoes TEXT,
-            FOREIGN KEY (paciente_id) REFERENCES pacientes(id),
-            FOREIGN KEY (profissional_id) REFERENCES profissionais(id)
-        )
-    `);
-
-	await connection.query(`
-        CREATE TABLE IF NOT EXISTS historico_medico (
-            id VARCHAR(36) PRIMARY KEY,
-            consulta_id VARCHAR(36) NOT NULL,
             diagnostico TEXT,
             prescricao TEXT,
             observacoes TEXT,
-            FOREIGN KEY (consulta_id) REFERENCES consultas(id)
+            FOREIGN KEY (paciente_id) REFERENCES pacientes(id),
+            FOREIGN KEY (profissional_id) REFERENCES profissionais(id)
         )
     `);
 
