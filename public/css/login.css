@@ -4,6 +4,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    transform: translateY(-100px);
 }
 
 .logo {
@@ -22,7 +24,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(to bottom, white, red);
+    background: linear-gradient(to bottom, white, rgba(255, 0, 0, 0.957));
     margin: 0;
 }
 
@@ -31,7 +33,7 @@ body {
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 350px;
+    width: 250px;
 
     display: flex;
     flex-direction: column;
@@ -48,7 +50,7 @@ label {
 }
 
 input {
-    width: 90%;
+    width: 250px;
     padding: 10px;
     margin: 5px 0;
     border: 1px solid #ccc;
@@ -80,23 +82,27 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    
+    font-size: 12px;
 }
 
 button:hover {
     background: #333;
 }
 
-.register-link {
-    display: block;
+.register-text {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+.register-link {
+    color: #2c7be5; /* ou a cor principal do seu projeto */
     text-decoration: none;
-    background: black;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
+    font-weight: bold;
 }
 
 .register-link:hover {
-    background: #333;
+    text-decoration: underline;
 }

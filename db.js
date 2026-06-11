@@ -2,6 +2,7 @@ import mysql from 'mysql2/promise';
 
 let connection = null;
 
+
 export async function conectarBanco() {
     if (connection) return connection;
 
@@ -9,7 +10,7 @@ export async function conectarBanco() {
         connection = await mysql.createConnection({
             host: 'localhost',
             user: 'root',
-            password: ''
+            password: 'root'
         });
 
         await connection.query('CREATE DATABASE IF NOT EXISTS projeto');
