@@ -1,4 +1,5 @@
 import UsuarioDAO from '../dao/usuarioDAO.js';
+import UsuarioModel from '../models/usuarioModel.js';
 import { conectarBanco } from '../db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -15,15 +16,15 @@ export default class UsuarioService {
         }
 
         try {
-            const usuario = await DAO.fetchUsuario(email)
+            const usuarioExiste = await DAO.fetchUsuario(email);
 
-            if (usuario) throw new Error("Usuário já existe")
+            if (usuarioExiste) throw new Error("Usuário já existe");
 
             const hash = await bcrypt.hash(senha, 10);
 
-            await DAO.criarUsuario({
-                nome, email, senha: hash
-            })
+            const usuario = new UsuarioModel(null, nome, email, hash);
+
+            await DAO.criarUsuario(usuario);
 
         } catch (err) {
             console.log(err);
@@ -44,7 +45,7 @@ export default class UsuarioService {
                 throw new Error("Usuário não existe")
             }
 
-            const usuario = rows[0];
+            const usuario = UsuarioModel.constructFromObject(rows[0])
 
             const senhaValida = await bcrypt.compare(senha, usuario.senha);
 

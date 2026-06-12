@@ -12,7 +12,6 @@ const db = await conectarBanco();
 import { router as pacienteRouter } from './routes/pacienteRoutes.js';
 import { router as profissionalRouter } from './routes/profissionalRoutes.js';
 import { router as consultaRouter } from './routes/consultaRoutes.js';
-import { router as disponibilidadeRouter } from './routes/disponibilidadeRoutes.js';
 import { router as usuarioRouter } from './routes/usuarioRoutes.js';
 
 
@@ -73,7 +72,6 @@ app.get('/principal', verifyJWT, (req, res) => {
 app.use("/pacientes", pacienteRouter);
 app.use("/profissionais", profissionalRouter);
 app.use("/consultas", consultaRouter);
-app.use("/disponibilidades", disponibilidadeRouter);
 app.use("/auth", usuarioRouter);
 
 app.get('/me', verifyJWT, async (req, res) => {

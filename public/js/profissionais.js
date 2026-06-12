@@ -10,7 +10,7 @@ $(document).ready(function () {
 
         ajax: {
             url: '/profissionais/fetchData',
-            type: 'GET'
+            type: 'GET',
         },
 
         columns: [
@@ -20,24 +20,61 @@ $(document).ready(function () {
             { data: 'telefone' },
             { data: 'email' },
             {
+                data: 'disponibilidade',
+                render: function (disponibilidades) {
+
+                    if (!disponibilidades?.length) {
+                        return '-';
+                    }
+
+                    const ordemDias = {
+                        segunda: 1,
+                        terca: 2,
+                        quarta: 3,
+                        quinta: 4,
+                        sexta: 5,
+                        sabado: 6,
+                        domingo: 7
+                    };
+
+                    const nomesDias = {
+                        segunda: 'Seg',
+                        terca: 'Ter',
+                        quarta: 'Qua',
+                        quinta: 'Qui',
+                        sexta: 'Sex',
+                        sabado: 'Sáb',
+                        domingo: 'Dom'
+                    };
+
+                    disponibilidades.sort((a, b) =>
+                        ordemDias[a.dia_semana] - ordemDias[b.dia_semana]
+                    );
+
+                    return disponibilidades.map(d =>
+                        `${nomesDias[d.dia_semana]} ${d.hora_inicio.substring(0, 5)} - ${d.hora_fim.substring(0, 5)}`
+                    ).join('<br>');
+                }
+            },
+            {
                 data: 'id',
                 render: function (id) {
 
                     return `
-                        <button class="btn-editar" data-id="${id}">
-                            Editar
-                        </button>
+            <button class="btn-editar" data-id="${id}">
+            Editar
+            </button >
 
-                        <button class="btn-excluir" data-id="${id}">
-                            Excluir
-                        </button>
-                    `;
+        <button class="btn-excluir" data-id="${id}">
+            Excluir
+        </button>
+    `;
                 }
             }
         ],
 
         language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
         }
 
     });
@@ -89,7 +126,7 @@ $(document).ready(function () {
 
         try {
 
-            const response = await fetch(`/profissionais/fetchData/${id}`);
+            const response = await fetch(`/profissionais/fetchData/${id} `);
 
             const profissional = await response.json();
 
@@ -101,6 +138,34 @@ $(document).ready(function () {
             $('#especialidade').val(profissional.especialidade);
             $('#telefone').val(profissional.telefone);
             $('#email').val(profissional.email);
+
+            $('.dia').prop('checked', false);
+            $('.horarios').removeClass('ativo');
+
+            $('.hora-inicio').val('');
+            $('.hora-fim').val('');
+
+            profissional.disponibilidade.forEach(disp => {
+
+                const checkbox = $(
+                    `.dia[value = "${disp.dia_semana}"]`
+                );
+
+                checkbox.prop('checked', true);
+
+                const horarios = checkbox
+                    .closest('.dia-disponibilidade')
+                    .find('.horarios');
+
+                horarios.addClass('ativo');
+
+                horarios.find('.hora-inicio')
+                    .val(disp.hora_inicio.substring(0, 5));
+
+                horarios.find('.hora-fim')
+                    .val(disp.hora_fim.substring(0, 5));
+
+            });
 
             modal.show();
 
@@ -126,6 +191,23 @@ $(document).ready(function () {
         const action =
             $('#id').val() ? 'Edit' : 'Insert';
 
+        const disponibilidades = [];
+
+        $('.dia-disponibilidade').each(function () {
+
+            const checkbox = $(this).find('.dia');
+
+            if (checkbox.is(':checked')) {
+
+                disponibilidades.push({
+                    dia_semana: checkbox.val(),
+                    hora_inicio: $(this).find('.hora-inicio').val(),
+                    hora_fim: $(this).find('.hora-fim').val()
+                });
+
+            }
+        });
+
         const payload = {
             action,
             id: $('#id').val(),
@@ -134,6 +216,7 @@ $(document).ready(function () {
             especialidade: $('#especialidade').val(),
             telefone: $('#telefone').val(),
             email: $('#email').val(),
+            disponibilidades
         };
 
         try {
@@ -148,7 +231,7 @@ $(document).ready(function () {
 
             const result = await response.text();
 
-            alert(result); 
+            alert(result);
 
             modal.hide();
 
@@ -160,6 +243,19 @@ $(document).ready(function () {
             alert('Erro ao salvar.');
 
         }
+
+    });
+
+    $(document).on('change', '.dia', function () {
+
+        const horarios = $(this)
+            .closest('.dia-disponibilidade')
+            .find('.horarios');
+
+        horarios.toggleClass('ativo', this.checked);
+
+        horarios.find('.hora-inicio, .hora-fim')
+            .prop('required', this.checked);
 
     });
 

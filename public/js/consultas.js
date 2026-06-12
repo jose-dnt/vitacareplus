@@ -4,8 +4,6 @@ async function carregarPacientes() {
         const response = await fetch('/pacientes/fetchData');
         const pacientes = await response.json();
 
-        console.log(pacientes)
-
         const selectPaciente = document.getElementById('paciente');
 
         selectPaciente.innerHTML =
@@ -60,7 +58,26 @@ $(document).ready(function () {
 
         ajax: {
             url: '/consultas/fetchData',
-            type: 'GET'
+            type: 'GET',
+            data: function (d) {
+                d.status = $('#filtroStatus').val();
+            }
+        },
+
+        initComplete: function () {
+
+            $('.dataTables_filter').append(`
+            <select id="filtroStatus" style="margin-left:10px">
+                <option value="">Todos</option>
+                <option value="agendada">Agendadas</option>
+                <option value="realizada">Realizadas</option>
+                <option value="cancelada">Canceladas</option>
+            </select>
+        `);
+
+            $('#filtroStatus').on('change', function () {
+                tabela.ajax.reload();
+            });
         },
 
         columns: [
@@ -104,7 +121,7 @@ $(document).ready(function () {
                     if (type === 'filter' || type === 'sort') {
                         return data;
                     }
-                    
+
                     return `
             <div class="status-group">
 
@@ -151,7 +168,7 @@ $(document).ready(function () {
         ],
 
         language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
         }
 
     });
@@ -170,10 +187,6 @@ $(document).ready(function () {
         });
 
         tabela.ajax.reload(null, false);
-    });
-
-    $('#filtroStatus').on('change', function () {
-        tabela.column(4).search($(this).val()).draw();
     });
 
     /*
@@ -207,6 +220,9 @@ $(document).ready(function () {
             $('#viewPacienteTelefone').val(paciente.telefone || '');
             $('#viewPacienteEmail').val(paciente.email || '');
             $('#viewPacienteEndereco').val(paciente.endereco || '');
+
+            $('.modal-titulo').text('Dados do Paciente');
+
             $('#modalPaciente').show();
 
         } catch (err) {
@@ -241,6 +257,8 @@ $(document).ready(function () {
             $('#viewProfissionalEspecialidade').val(profissional.especialidade || '');
             $('#viewProfissionalTelefone').val(profissional.telefone || '');
             $('#viewProfissionalEmail').val(profissional.email || '');
+
+            $('.modal-titulo').text('Dados do Profissional');
 
             $('#modalProfissional').show();
 
@@ -299,6 +317,8 @@ $(document).ready(function () {
             await carregarProfissionais();
 
             $('#formConsulta')[0].reset();
+
+            $('.modal-titulo').text('Nova Consulta');
 
             $('#id').val('');
 
@@ -399,6 +419,10 @@ $(document).ready(function () {
             status: $('#status').val()
         };
 
+        if (action === 'Insert') {
+            payload.status = 'agendada';
+        };
+
         try {
 
             const response = await fetch('/consultas/submitData', {
@@ -410,8 +434,6 @@ $(document).ready(function () {
             });
 
             const result = await response.text();
-
-            alert(result);
 
             modal.hide();
 
@@ -456,8 +478,6 @@ $(document).ready(function () {
             });
 
             const result = await response.text();
-
-            alert(result);
 
             tabela.ajax.reload(null, false);
 

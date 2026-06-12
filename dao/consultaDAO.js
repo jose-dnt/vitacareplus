@@ -10,11 +10,17 @@ export default class ConsultaDAO {
 
         const { start, length, status } = queryData;
 
-        let query = `SELECT c.id, pa.id AS paciente_id, pa.nome AS paciente_nome, pr.id AS profissional_id, pr.nome AS profissional_nome, c.data, c.horario, c.status, c.diagnostico, c.prescricao, c.observacoes FROM consultas c, pacientes pa, profissionais pr WHERE c.paciente_id = pa.id AND c.profissional_id = pr.id ORDER BY c.data DESC, c.horario DESC`;
+        let query = `SELECT c.id, pa.id AS paciente_id, pa.nome AS paciente_nome, pr.id AS profissional_id, pr.nome AS profissional_nome, c.data, c.horario, c.status, c.diagnostico, c.prescricao, c.observacoes FROM consultas c, pacientes pa, profissionais pr WHERE c.paciente_id = pa.id AND c.profissional_id = pr.id`;
+        
+        if (status) {
+            query += ` AND c.status = '${status}'`;
+        };
+
+        query += ` ORDER BY c.data DESC, c.horario DESC`;
 
         if (start !== undefined && length !== undefined) {
             query += ` LIMIT ${start}, ${length}`;
-        }
+        };
 
         try {
 

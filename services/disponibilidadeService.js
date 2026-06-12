@@ -11,16 +11,11 @@ export default class DisponibilidadeService {
         try {
             const result = await DAO.fetchAll(query);
 
-            const disponibilidades = result.data.map((row) => {
-                return DisponibilidadeModel.constructFromObject(row)
+            const disponibilidades = result.map((row) => {
+                return DisponibilidadeModel.constructFromObject({profissional_id: query.profissional_id, ...row})
             })
 
-            return {
-                draw: Number(query.draw),
-                recordsTotal: result.total,
-                recordsFiltered: result.total,
-                data: disponibilidades
-            };
+            return disponibilidades;
         } catch (err) {
             console.error(err);
         };
@@ -28,19 +23,19 @@ export default class DisponibilidadeService {
 
     static async submitData(body) {
         try {
-            const {action, ...data} = body;
-            const result = await DAO.submitData(action, data);
+            const { action, ...data } = body;
+            const disponibilidade = DisponibilidadeModel.constructFromObject(data)
+            const result = await DAO.submitData(action, disponibilidade);
             return result;
         } catch (err) {
             console.error(err);
         }
     }
 
-    static async fetchSingle(id) {
+    static async removeAll(profissional_id) {
         try {
-            const data = await DAO.fetchSingle(id)
-            const disponibilidade = DisponibilidadeModel.constructFromObject(data);
-            return disponibilidade;
+            const result = await DAO.removeAll(profissional_id);
+            return result;
         } catch (err) {
             console.error(err);
         }

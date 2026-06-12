@@ -29,7 +29,8 @@ export default class ConsultaService {
     static async submitData(body) {
         try {
             const { action, ...data } = body;
-            const result = await DAO.submitData(action, data);
+            const consulta = ConsultaModel.constructFromObject(data);
+            const result = await DAO.submitData(action, consulta);
             return result;
         } catch (err) {
             console.error(err);

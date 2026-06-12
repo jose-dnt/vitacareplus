@@ -46,14 +46,55 @@ body {
 
 /* Caixa do modal */
 .modal-content {
-    width: 600px;
-    max-width: 90%;
+    width: 950px;
+    max-width: 95%;
     background: #fff;
     margin: 50px auto;
     border-radius: 16px;
     padding: 30px;
-    box-shadow: 0 20px 50px rgba(0,0,0,.25);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .25);
     animation: modalShow .2s ease-out;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.disponibilidade-container {
+    border-left: 1px solid #e5e7eb;
+    padding-left: 24px;
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.disponibilidade-container h4 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.dia-disponibilidade {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.horarios {
+    display: none;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.horarios.ativo {
+    display: flex;
+}
+
+.horarios input {
+    flex: 1;
 }
 
 /* Animação */
@@ -62,6 +103,7 @@ body {
         opacity: 0;
         transform: translateY(-15px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -115,7 +157,14 @@ body {
 .campo input:focus {
     outline: none;
     border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37,99,235,.15);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, .15);
+}
+
+.dia-disponibilidade {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
 }
 
 /* Botão salvar */

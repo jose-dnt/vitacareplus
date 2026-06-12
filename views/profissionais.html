@@ -58,6 +58,7 @@
                             <th>Especialidade</th>
                             <th>Telefone</th>
                             <th>Email</th>
+                            <th>Disponibilidade</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -85,29 +86,120 @@
 
                 <input type="hidden" id="id">
 
-                <div class="campo">
-                    <label for="nome">Nome</label>
-                    <input type="text" id="nome" required>
-                </div>
+                <div class="form-grid">
 
-                <div class="campo">
-                    <label for="crm">CRM</label>
-                    <input type="text" id="crm" required>
-                </div>
+                    <div>
 
-                <div class="campo">
-                    <label for="especialidade">Especialidade</label>
-                    <input type="text" id="especialidade" required>
-                </div>
+                        <div class="campo">
+                            <label for="nome">Nome</label>
+                            <input type="text" id="nome" required>
+                        </div>
 
-                <div class="campo">
-                    <label for="telefone">Telefone</label>
-                    <input type="text" id="telefone" required>
-                </div>
+                        <div class="campo">
+                            <label for="crm">CRM</label>
+                            <input type="text" id="crm" required>
+                        </div>
 
-                <div class="campo">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required>
+                        <div class="campo">
+                            <label for="especialidade">Especialidade</label>
+                            <input type="text" id="especialidade" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="telefone">Telefone</label>
+                            <input type="text" id="telefone" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+
+                    </div>
+
+                    <div class="disponibilidade-container">
+
+                        <h4>Disponibilidade</h4>
+
+                        <div id="disponibilidades">
+
+                            <div id="disponibilidades">
+                                <div class="dia-disponibilidade">
+                                    <label>
+                                        <input type="checkbox" class="dia" value="segunda">
+                                        Segunda-feira
+                                    </label>
+                                    <div class="horarios">
+                                        <input type="time" class="hora-inicio">
+                                        <input type="time" class="hora-fim">
+                                    </div>
+                                </div>
+                                <div class="dia-disponibilidade">
+                                    <label>
+                                        <input type="checkbox" class="dia" value="terca">
+                                        Terça-feira
+                                    </label>
+                                    <div class="horarios">
+                                        <input type="time" class="hora-inicio">
+                                        <input type="time" class="hora-fim">
+                                    </div>
+                                </div>
+                                <div class="dia-disponibilidade">
+                                    <label>
+                                        <input type="checkbox" class="dia" value="quarta">
+                                        Quarta-feira
+                                    </label>
+                                    <div class="horarios">
+                                        <input type="time" class="hora-inicio">
+                                        <input type="time" class="hora-fim">
+                                    </div>
+                                </div>
+                                <div class="dia-disponibilidade">
+                                    <label>
+                                        <input type="checkbox" class="dia" value="quinta">
+                                        Quinta-feira
+                                    </label>
+                                    <div class="horarios">
+                                        <input type="time" class="hora-inicio">
+                                        <input type="time" class="hora-fim">
+                                    </div>
+                                </div>
+                                <div class="dia-disponibilidade">
+                                    <label>
+                                        <input type="checkbox" class="dia" value="sexta">
+                                        Sexta-feira
+                                    </label>
+                                    <div class="horarios">
+                                        <input type="time" class="hora-inicio">
+                                        <input type="time" class="hora-fim">
+                                    </div>
+                                </div>
+                                <div class="dia-disponibilidade">
+                                    <label>
+                                        <input type="checkbox" class="dia" value="sabado">
+                                        Sábado
+                                    </label>
+                                    <div class="horarios">
+                                        <input type="time" class="hora-inicio">
+                                        <input type="time" class="hora-fim">
+                                    </div>
+                                </div>
+                                <div class="dia-disponibilidade">
+                                    <label>
+                                        <input type="checkbox" class="dia" value="domingo">
+                                        Domingo
+                                    </label>
+                                    <div class="horarios">
+                                        <input type="time" class="hora-inicio">
+                                        <input type="time" class="hora-fim">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
                 </div>
 
                 <button type="submit" class="btn-salvar">

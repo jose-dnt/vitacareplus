@@ -13,11 +13,11 @@ export default class ProfissionalDAO {
 
         const search_query = search_value ? ` WHERE nome LIKE '%${search_value}%' OR crm LIKE '%${search_value}%' OR telefone LIKE '%${search_value}%' OR especialidade LIKE '%${search_value}%' OR email LIKE '%${search_value}%'` : '';
 
-        let query = `SELECT id, nome, crm, especialidade, telefone, email FROM profissionais ${search_query}`;
+        let query = `SELECT * FROM profissionais ${search_query}`;
 
         if (start !== undefined && length !== undefined) {
             query += ` LIMIT ${start}, ${length}`;
-        }
+        };
 
         try {
 
@@ -70,7 +70,7 @@ export default class ProfissionalDAO {
 
     async fetchSingle(id) {
         try {
-            const [rows] = await this.connection.query(`SELECT * FROM profissionais WHERE id = ?`, [id]);
+            const [rows] = await this.connection.query(`SELECT * from profissionais WHERE id = ?`, [id]);
             return rows[0];
         } catch (err) {
             console.log(err)

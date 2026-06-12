@@ -112,7 +112,7 @@ body {
     color: #374151;
 }
 
-.campo input,
+.campo input, 
 .campo select {
     padding: 12px;
     border: 1px solid #d1d5db;
@@ -166,11 +166,13 @@ body {
     opacity: .85;
 }
 
-.filtro-status {
-    padding: 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 10px;
-    margin-right: 10px;
+#filtroStatus {
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    padding: 5px;
+    background-color: transparent;
+    color: inherit;
+    padding: 4px;
 }
 
 /* Botão salvar */

@@ -29,7 +29,8 @@ export default class PacienteService {
     static async submitData(body) {
         try {
             const {action, ...data} = body;
-            const result = await DAO.submitData(action, data);
+            const paciente = PacienteModel.constructFromObject(data);
+            const result = await DAO.submitData(action, paciente);
             return result;
         } catch (err) {
             console.error(err);

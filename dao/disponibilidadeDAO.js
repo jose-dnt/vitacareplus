@@ -8,29 +8,17 @@ export default class DisponibilidadeDAO {
 
     async fetchAll(queryData) {
 
-        const { start, length, search } = queryData;
-        const search_value = search?.value || "";
+        const { profissional_id } = queryData;
 
-        const search_query = search_value ? ` WHERE profissional_id = '%${search_value}%'` : '';
+        const search_query = profissional_id ? ` profissional_id = '${profissional_id}'` : '';
 
         let query = `SELECT id, dia_semana, hora_inicio, hora_fim FROM disponibilidade WHERE ${search_query}`;
-
-        if (start !== undefined && length !== undefined) {
-            query += ` LIMIT ${start}, ${length}`;
-        }
 
         try {
 
             const [rows] = await this.connection.query(query)
 
-            const [totalRows] = await this.connection.query(
-                'SELECT COUNT(*) as total FROM pacientes'
-            );
-
-            return {
-                data: rows,
-                total: totalRows[0].total
-            };
+            return rows;
 
         } catch (err) {
             console.log(err)
@@ -45,15 +33,11 @@ export default class DisponibilidadeDAO {
         let message;
 
         if (action === 'Insert') {
-            query = `INSERT INTO disponibilidades (id, profissional_id, dia_semana, hora_inicio, hora_fim) VALUES (?, ?, ?, ?, ?)`;
+            query = `INSERT INTO disponibilidade (id, profissional_id, dia_semana, hora_inicio, hora_fim) VALUES (?, ?, ?, ?, ?)`;
             queryData = [crypto.randomUUID(), data.profissional_id, data.dia_semana, data.hora_inicio, data.hora_fim];
             message = 'Dados foi inserido!';
-        } else if (action === 'Edit') {
-            query = `UPDATE disponibilidades SET profissional_id = ?, dia_semana = ?, hora_inicio = ?, hora_fim = ? WHERE id = ?`;
-            queryData = [data.profissional_id, data.dia_semana, data.hora_inicio, data.hora_fim, data.id];
-            message = 'Dados atualizados!';
         } else if (action === 'Delete') {
-            query = `DELETE FROM disponibilidades WHERE id = ?`;
+            query = `DELETE FROM disponibilidade WHERE id = ?`;
             queryData = [data.id];
             message = 'Deletado!';
         } else {
@@ -68,12 +52,13 @@ export default class DisponibilidadeDAO {
         }
     }
 
-    async fetchSingle(id) {
+    async removeAll(profissional_id) {
         try {
-            const [rows] = await this.connection.query(`SELECT * FROM disponibilidades WHERE id = ?`, [id]);
-            return rows[0];
+            await this.connection.query(`DELETE FROM disponibilidade WHERE profissional_id = ?`, [profissional_id]);
+            return 'Deletados!';
         } catch (err) {
             console.log(err)
         }
     }
+
 }
